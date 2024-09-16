@@ -29,7 +29,7 @@ This project is licensed under the [Chosen License], encouraging collaboration a
 
 ### Built With
 
-* [![Rust][Rust]][Rust-url]
+[![Rust][Rust]][Rust-url]
 
 
 <!-- LICENSE -->

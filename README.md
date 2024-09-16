@@ -29,7 +29,7 @@ This project is licensed under the [Chosen License], encouraging collaboration a
 
 ### Built With
 
-* [![Rust][https://www.rust-lang.org]][Rust-url]
+* [![Rust][Rust]][Rust-url]
 
 
 <!-- LICENSE -->
@@ -50,4 +50,4 @@ Distributed under the GPL-3.0 License. See `LICENSE.txt` for more information.
 [license-url]: https://github.com/hakdag/peersend/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/hakanakdag
-[Rust]: https://www.rust-lang.org/static/images/rust-logo-blk.svg
+[Rust-url]: https://www.rust-lang.org/static/images/rust-logo-blk.svg

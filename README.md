@@ -8,10 +8,10 @@
 <br />
 <div align="center">
   <a href="https://github.com/hakdag/peersend">
-    <img src="images/logo_big.png" alt="Logo" width="80" height="80">
+    <img src="images/logo_big.png" alt="Logo" width="537" height="179">
   </a>
 
-<h3 align="center">project_title</h3>
+<h3 align="center">PeerSend</h3>
 
   <p align="center">
 PeerSend is an open-source, peer-to-peer file transfer tool that allows users to securely and easily share files between devices using WebRTC. Designed for both desktop and mobile platforms, PeerSend ensures encrypted, private file transfers without relying on third-party servers. With an emphasis on simplicity and security, it provides a seamless file-sharing experience between peers, ensuring that your data stays private and secure throughout the process.

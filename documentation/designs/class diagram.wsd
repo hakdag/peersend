@@ -1,0 +1,122 @@
+@startuml Models
+abstract class BaseModel {
+  +Id : Guid
+  +IsDeleted : Boolean
+  +CreatedDate : Date
+}
+
+package "User Management" <<Frame>> {
+  enum UserStatus {
+    +Online : 1
+    +Offline : 2
+  }
+
+  class User {
+    .. UserName Rules ..
+    Required
+    Minimum 5 characters
+    Maximum 20 characters
+    Cant have space and special characters
+    User name must be unique
+    +UserName : String
+    ..
+
+    .. Email Rules ..
+    Required
+    Must be a valid email
+    Email must be unique
+    Different users cant have a common email address
+    +Email : String
+    ..
+
+    .. Status Rules ..
+    Required
+    +Status : UserStatus
+    ..
+
+    .. Password Rules ..
+    Encrypted
+    Required
+    ReadOnly
+    Minimum 8 characters
+    Cant have space
+    +Password : String
+    ..
+  }
+
+  class UserRegister {
+    .. UserName Rules ..
+    Required
+    Minimum 5 characters
+    Maximum 20 characters
+    Cant have space and special characters
+    User name must be unique
+    +UserName : String
+    ..
+
+    .. Email Rules ..
+    Required
+    Must be a valid email
+    Email must be unique
+    Different users cant have a common email address
+    +Email : String
+    ..
+
+    .. Password Rules ..
+    Required
+    Minimum 8 characters
+    Cant have space
+    +Password : String
+    ..
+
+    .. Confirm Password Rules ..
+    Required
+    Must be same with the Password field
+    Data Transfer only field
+    +ConfirmPassword : String
+    ..
+  }
+
+  BaseModel <|-- User
+
+  User .. UserStatus
+}
+
+package "Device Management" <<Frame>> {
+  class Device {
+    .. Device Name Rules ..
+    Required
+    Minimum 3 characters
+    Maximum 20 characters
+    +Name : String
+    ..
+
+    .. Token Rules ..
+    Auto-generated
+    Encrypted
+    -Token : String
+
+    +User : User
+  }
+
+  class DeviceRegister {
+    .. Device Name Rules ..
+    Required
+    Minimum 3 characters
+    Maximum 20 characters
+    +Name : String
+    ..
+
+    .. User ..
+    Current User's Id
+    -UserId : String
+    ..
+  }
+
+
+  BaseModel <|-- Device
+
+  Device .. User
+}
+
+@enduml

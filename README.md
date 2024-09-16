@@ -51,4 +51,4 @@ Distributed under the GPL-3.0 License. See `LICENSE.txt` for more information.
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/hakanakdag
 [Rust-url]: https://www.rust-lang.org/
-[Rust]: images/rust-logo-blk.svg
+[Rust]: https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white

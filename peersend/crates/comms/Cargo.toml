@@ -1,0 +1,8 @@
+[package]
+name = "comms"
+version = "0.1.0"
+authors = ["Hakan Akdag <hakanakdag46@gmail.com>"]
+description = "Network operations"
+edition = "2021"
+
+[dependencies]

@@ -1,0 +1,8 @@
+[package]
+name = "services"
+version = "0.1.0"
+authors = ["Hakan Akdag <hakanakdag46@gmail.com>"]
+description = "Handles logic"
+edition = "2021"
+
+[dependencies]

@@ -1,0 +1,8 @@
+[package]
+name = "mediators"
+version = "0.1.0"
+authors = ["Hakan Akdag <hakanakdag46@gmail.com>"]
+description = "Distrubutes commands to services"
+edition = "2021"
+
+[dependencies]

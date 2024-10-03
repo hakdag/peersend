@@ -1,0 +1,26 @@
+[package]
+name = "peersend"
+version = "0.1.0"
+authors = ["Hakan Akdag <hakanakdag46@gmail.com>"]
+description = "PeerSend is an open-source, peer-to-peer file transfer tool that allows users to securely and easily share files between devices using WebRTC. Designed for both desktop and mobile platforms, PeerSend ensures encrypted, private file transfers without relying on third-party servers. With an emphasis on simplicity and security, it provides a seamless file-sharing experience between peers, ensuring that your data stays private and secure throughout the process."
+edition = "2021"
+
+[[bin]]
+bench = false
+path = "crates/core/main.rs"
+name = "ps"
+
+[[test]]
+name = "integration"
+path = "tests/tests.rs"
+
+[workspace]
+members = [
+  "crates/cli"
+, "crates/comms", "crates/mediators", "crates/services"]
+
+[dependencies]
+cli = { path = "./crates/cli" }
+
+[dev-dependencies]
+

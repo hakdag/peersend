@@ -1,0 +1,12 @@
+@startuml Crates
+
+[CLI] --> [Core]
+[CLI] -> [Services]
+[Services] -> [Mediators]
+[Services] -> [Core]
+[Services] --> "File System"
+[Mediators] -> [Communication]
+[Communication] --> WebRTC
+[Communication] --> UDP
+
+@enduml

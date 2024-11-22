@@ -6,3 +6,4 @@ description = "Handles logic"
 edition = "2021"
 
 [dependencies]
+core = { path = "../core" }

@@ -18,6 +18,10 @@ impl Parser {
         match arg {
             "help" => return Result::Ok(Command::new("Help".to_string(), CommandType::Help)),
             "version" => return Result::Ok(Command::new("Version".to_string(), CommandType::Version)),
+            "create-user" => return Result::Ok(Command::new("Create User".to_string(), CommandType::CreateUser)),
+            "login" => return Result::Ok(Command::new("Login".to_string(), CommandType::Login)),
+            "register" => return Result::Ok(Command::new("Register Device".to_string(), CommandType::RegisterDevice)),
+            "send" => return Result::Ok(Command::new("Send File".to_string(), CommandType::Send)),
             _ => return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "unknown command"))
         }
     }

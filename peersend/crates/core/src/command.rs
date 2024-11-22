@@ -2,6 +2,10 @@
 pub enum CommandType {
     Help,
     Version,
+    CreateUser,
+    Login,
+    RegisterDevice,
+    Send
 }
 
 #[derive(Debug)]

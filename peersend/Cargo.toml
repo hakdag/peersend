@@ -7,7 +7,7 @@ edition = "2021"
 
 [[bin]]
 bench = false
-path = "crates/core/main.rs"
+path = "crates/cli/main.rs"
 name = "ps"
 
 [[test]]
@@ -16,11 +16,15 @@ path = "tests/tests.rs"
 
 [workspace]
 members = [
-  "crates/cli"
-, "crates/comms", "crates/mediators", "crates/services"]
+  "crates/core",
+  "crates/comms",
+  "crates/mediators",
+  "crates/services"
+]
 
 [dependencies]
-cli = { path = "./crates/cli" }
+core = { path = "./crates/core" }
+services = { path = "./crates/services" }
 
 [dev-dependencies]
 

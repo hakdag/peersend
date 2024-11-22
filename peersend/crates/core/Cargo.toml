@@ -1,8 +1,8 @@
 [package]
-name = "cli"
+name = "core"
 version = "0.1.0"
 authors = ["Hakan Akdag <hakanakdag46@gmail.com>"]
-description = "Command input"
+description = "Core"
 edition = "2021"
 
 [dependencies]

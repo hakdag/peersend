@@ -1,6 +1,7 @@
 use std::process::ExitCode;
 mod parser;
 mod command_executor;
+mod parsers;
 use crate::parser::Parser;
 use crate::command_executor::CommandExecutor;
 use core::command;

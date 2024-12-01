@@ -25,6 +25,10 @@ members = [
 [dependencies]
 core = { path = "./crates/core" }
 services = { path = "./crates/services" }
+comms = { path = "./crates/comms" }
+
+[dependencies.redis]
+version = "*"
 
 [dev-dependencies]
 

@@ -6,3 +6,7 @@ description = "Network operations"
 edition = "2021"
 
 [dependencies]
+core = { path = "../core" }
+
+[dependencies.redis]
+version = "*"

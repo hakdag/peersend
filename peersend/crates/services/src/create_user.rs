@@ -1,8 +1,9 @@
 use std::io::Error;
-use core::{command::{Command, CommandArgument}, storage::StorageAccess, user::User};
+use core::{command::Command, storage::StorageAccess, user::User};
 use validify::Validate;
 
 use comms::redis_communication::RedisCommunication;
+use crate::get_arg;
 
 pub struct CreateUserService {}
 
@@ -16,9 +17,9 @@ impl CreateUserService {
             Some(args) => args,
             None => &Vec::new(),
         };
-        let key = Self::get_arg(arguments, 0);
-        let username = Self::get_arg(arguments, 0);
-        let user = User::new(username.clone(), Self::get_arg(arguments, 1), Self::get_arg(arguments, 2));
+        let key = get_arg(arguments, 0);
+        let username = get_arg(arguments, 0);
+        let user = User::new(username.clone(), get_arg(arguments, 1), get_arg(arguments, 2));
 
         let res = user.validate();
         if res.is_err() {
@@ -30,13 +31,6 @@ impl CreateUserService {
         match rc.set(key, user) {
             Ok(_) => Result::Ok(format!("User with username '{}' is created.", username)),
             Err(e) => Result::Err(e),
-        }
-    }
-
-    fn get_arg(arguments: &Vec<CommandArgument>, index: usize) -> String {
-        match arguments.get(index) {
-            Some(arg) => arg.name.clone(),
-            None => String::new(),
         }
     }
 }

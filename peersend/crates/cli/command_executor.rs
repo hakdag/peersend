@@ -1,13 +1,14 @@
 use core::command::{Command, CommandType};
 use std::io::Error;
+use services::file::FileStorage;
 use services::help::HelpService;
 use services::version::VersionService;
 use services::create_user::CreateUserService;
 use services::login::LoginService;
 use services::register_device::RegisterDeviceService;
 use services::send_file::SendFileService;
+use comms::redis_communication::RedisCommunication;
 
-#[derive(Debug)]
 pub struct CommandExecutor {}
 
 impl CommandExecutor {
@@ -17,7 +18,15 @@ impl CommandExecutor {
             CommandType::Help => HelpService::run(),
             CommandType::Version => VersionService::run(),
             CommandType::CreateUser => CreateUserService::run(command),
-            CommandType::Login => LoginService::run(command),
+            CommandType::Login => {
+                let rc = match RedisCommunication::new() {
+                    Ok(rc) => rc,
+                    Err(e) => return Err(e),
+                };
+                let fs = FileStorage {};
+                let ls: LoginService<RedisCommunication, FileStorage> = LoginService::new(rc, fs);
+                return ls.run(command);
+            }
             CommandType::RegisterDevice => RegisterDeviceService::run(command),
             CommandType::Send => SendFileService::run(command),
         }

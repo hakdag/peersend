@@ -9,3 +9,5 @@ edition = "2021"
 core = { path = "../core" }
 comms = { path = "../comms" }
 validify = { version = "*" }
+serde = { version = "1.0", features = ["derive"] }
+jsonwebtoken = "9"

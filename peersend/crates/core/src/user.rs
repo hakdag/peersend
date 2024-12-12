@@ -2,6 +2,7 @@ use redis::{from_redis_value, FromRedisValue, ToRedisArgs};
 use bincode::{serialize, deserialize};
 use serde::{Serialize, Deserialize};
 use validify::Validify;
+use crate::device::Device;
 
 #[derive(Serialize, Deserialize, Validify, Debug)]
 pub struct User {
@@ -11,11 +12,21 @@ pub struct User {
     pub email: String,
     #[validate(length(min = 3))]
     pub password: String,
+
+    pub devices: Vec<Device>,
 }
 
 impl User {
     pub fn new(username: String, password: String, email: String) -> User {
-        User { username, password, email }
+        User { username, password, email, devices: Vec::new() }
+    }
+
+    pub fn user_name(&self) -> &String {
+        &self.username
+    }
+
+    pub fn add_device(&mut self, device: Device) {
+        self.devices.push(device);
     }
 }
 

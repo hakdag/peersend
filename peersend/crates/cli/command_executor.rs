@@ -26,8 +26,16 @@ impl CommandExecutor {
                 let fs = FileStorage {};
                 let ls: LoginService<RedisCommunication, FileStorage> = LoginService::new(rc, fs);
                 return ls.run(command);
-            }
-            CommandType::RegisterDevice => RegisterDeviceService::run(command),
+            },
+            CommandType::RegisterDevice => {
+                let rc = match RedisCommunication::new() {
+                    Ok(rc) => rc,
+                    Err(e) => return Err(e),
+                };
+                let fs = FileStorage {};
+                let register_device_service: RegisterDeviceService<RedisCommunication, FileStorage> = RegisterDeviceService::new(rc, fs);
+                return register_device_service.run(command);
+            },
             CommandType::Send => SendFileService::run(command),
         }
     }

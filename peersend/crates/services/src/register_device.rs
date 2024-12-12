@@ -1,5 +1,5 @@
 use std::io::Error;
-use core::{command::Command, device::Device, storage::StorageAccess, user::{self, User}};
+use core::{command::Command, device::Device, storage::StorageAccess, user::User};
 
 use crate::{file::TokenStorageAccessable, get_arg, jwt::TokenHandler};
 

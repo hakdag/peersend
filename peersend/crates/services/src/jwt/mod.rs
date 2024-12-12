@@ -1,6 +1,6 @@
 use std::io::Error;
 use std::convert::TryFrom;
-use chrono::{DateTime, Days, NaiveDateTime, TimeZone, Utc};
+use chrono::Utc;
 use serde::{Serialize, Deserialize};
 use jsonwebtoken::{decode, encode, errors::ErrorKind, Algorithm, DecodingKey, EncodingKey, Header, Validation};
 
@@ -35,19 +35,11 @@ impl TokenHandler {
         match encode(&Header::default(), &my_claims, &EncodingKey::from_secret(&self.key)) {
             Ok(t) => Ok(t),
             Err(_) => Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, format!("Token generation has failed.").to_string()))
-            /*
-            Err(e) => match *e.kind() {
-                ErrorKind::InvalidToken => panic!("Token is invalid"), // Example on how to handle a specific error
-                ErrorKind::InvalidIssuer => panic!("Issuer is invalid"), // Example on how to handle a specific error
-                _ => panic!("Some other errors"),
-            },
-            */
         }     
     }
 
     pub fn validate(&self, token: String) -> Result<String, Error> {
         let mut validation = Validation::new(Algorithm::HS256);
-        // validation.sub = Some("test".to_string());
         validation.set_required_spec_claims(&["exp", "sub", "iat", "iss"]);
         match decode::<Claims>(&token, &DecodingKey::from_secret(&self.key), &validation) {
             Ok(claims) => Ok(claims.claims.sub),

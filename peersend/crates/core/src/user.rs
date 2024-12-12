@@ -28,6 +28,20 @@ impl User {
     pub fn add_device(&mut self, device: Device) {
         self.devices.push(device);
     }
+
+    pub fn has_device(&self, arg_source_device: String) -> bool {
+        let mut n = 0;
+        while n < self.devices.len() {
+            let device = self.devices.get(n).unwrap();
+            if device.devicename == arg_source_device {
+                return true;
+            }
+
+            n += 1;
+        }
+
+        false
+    }
 }
 
 impl ToRedisArgs for User {

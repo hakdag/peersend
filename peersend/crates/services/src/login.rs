@@ -26,12 +26,12 @@ impl<TRedis, TFile> LoginService<TRedis, TFile> where TRedis: StorageAccess, TFi
                     return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, format!("Invalid password entered.").to_string()));
                 }
 
-                let token = TokenHandler::generate(user.username).unwrap();
-                match self.token_storage_access.save_token(token) {
+                let token_handler = TokenHandler::new();
+                let token = token_handler.generate(user.username).unwrap();
+                match self.token_storage_access.save(token) {
                     Ok(_) => Result::Ok("Login successful!".to_string()),
                     Err(e) => Err(e),
                 }
-                
             },
             Err(e) => Result::Err(e),
         }

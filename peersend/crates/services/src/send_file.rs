@@ -1,15 +1,16 @@
 use std::{io::Error, path::Path};
-use core::{command::Command, storage::StorageAccess, user::User};
+use core::{command::Command, protocol::ProtocolAccessable, storage::StorageAccess, user::User};
 use crate::{file::TokenStorageAccessable, get_arg, jwt::TokenHandler};
 
-pub struct SendFileService<TRedis, TFile> where TRedis: StorageAccess, TFile: TokenStorageAccessable {
+pub struct SendFileService<TRedis, TFile, TProtocol> where TRedis: StorageAccess, TFile: TokenStorageAccessable, TProtocol: ProtocolAccessable {
     storage_access: TRedis,
-    token_storage_access: TFile
+    token_storage_access: TFile,
+    protocol_access: TProtocol
 }
 
-impl<TRedis, TFile> SendFileService<TRedis, TFile> where TRedis: StorageAccess, TFile: TokenStorageAccessable {
-    pub fn new(storage_access: TRedis, token_storage_access: TFile) -> Self {
-        Self { storage_access, token_storage_access }
+impl<TRedis, TFile, TProtocol> SendFileService<TRedis, TFile, TProtocol> where TRedis: StorageAccess, TFile: TokenStorageAccessable, TProtocol: ProtocolAccessable {
+    pub fn new(storage_access: TRedis, token_storage_access: TFile, protocol_access: TProtocol) -> Self {
+        Self { storage_access, token_storage_access, protocol_access }
     }
 
     pub fn run(&self, command: &Command) -> Result<String, Error> {
@@ -52,6 +53,9 @@ impl<TRedis, TFile> SendFileService<TRedis, TFile> where TRedis: StorageAccess, 
             return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "User did not register the target device.".to_string()));
         }
 
-        Ok("File sent!".to_string())
+        match self.protocol_access.send_file() {
+            Ok(_) => Ok("File sent!".to_string()),
+            Err(e) => Err(e),
+        }
     }
 }

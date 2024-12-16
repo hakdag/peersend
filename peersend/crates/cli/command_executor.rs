@@ -1,5 +1,6 @@
 use core::command::{Command, CommandType};
 use std::io::Error;
+use comms::fake_communicator::FakeCommunicator;
 use services::file::FileStorage;
 use services::help::HelpService;
 use services::version::VersionService;
@@ -32,7 +33,8 @@ impl CommandExecutor {
                 register_device_service.run(command)
             },
             CommandType::Send => {
-                let send_file_service: SendFileService<RedisCommunication, FileStorage> = SendFileService::new(rc, fs);
+                let fc = FakeCommunicator::new();
+                let send_file_service: SendFileService<RedisCommunication, FileStorage, FakeCommunicator> = SendFileService::new(rc, fs, fc);
                 send_file_service.run(command)
             },
         }

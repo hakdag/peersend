@@ -3,6 +3,7 @@ use std::io::Error;
 use crate::command::Command;
 use crate::parsers::get_arg;
 use crate::parsers::help_parser::HelpParser;
+use crate::parsers::listen_parser::ListenParser;
 use crate::parsers::version_parser::VersionParser;
 use crate::parsers::create_user_parser::CreateUserParser;
 use crate::parsers::login_parser::LoginParser;
@@ -28,6 +29,7 @@ impl Parser {
             "create-user" => CreateUserParser::parse(&args),
             "login" => LoginParser::parse(&args),
             "register" => RegisterDeviceParser::parse(&args),
+            "listen" => ListenParser::parse(),
             "send" => SendFileParser::parse(&args),
             _ => return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "Unknown command"))
         }

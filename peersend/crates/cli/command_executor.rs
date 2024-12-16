@@ -3,6 +3,7 @@ use std::io::Error;
 use comms::fake_communicator::FakeCommunicator;
 use services::file::FileStorage;
 use services::help::HelpService;
+use services::listen::ListenService;
 use services::version::VersionService;
 use services::create_user::CreateUserService;
 use services::login::LoginService;
@@ -32,6 +33,7 @@ impl CommandExecutor {
                 let register_device_service: RegisterDeviceService<RedisCommunication, FileStorage> = RegisterDeviceService::new(rc, fs);
                 register_device_service.run(command)
             },
+            CommandType::Listen => ListenService::run(command),
             CommandType::Send => {
                 let fc = FakeCommunicator::new();
                 let send_file_service: SendFileService<RedisCommunication, FileStorage, FakeCommunicator> = SendFileService::new(rc, fs, fc);

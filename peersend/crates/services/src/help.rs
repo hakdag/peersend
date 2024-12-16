@@ -12,6 +12,7 @@ impl HelpService {
         parts.push("create-user [username] [password] [email]");
         parts.push("login [username] [password]");
         parts.push("register [devicename]");
+        parts.push("listen");
         parts.push("send [filepath] [source device name] [target device name]");
 
         let output = parts.join("\n");

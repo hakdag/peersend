@@ -5,6 +5,7 @@ pub enum CommandType {
     CreateUser,
     Login,
     RegisterDevice,
+    Listen,
     Send
 }
 

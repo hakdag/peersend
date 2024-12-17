@@ -1,4 +1,4 @@
-use std::{io::Error, path::Path};
+use std::{fs::File, io::{BufReader, Error, Read}, path::Path};
 use core::{command::Command, protocol::ProtocolAccessable, storage::StorageAccess, user::User};
 use crate::{file::TokenStorageAccessable, get_arg, jwt::TokenHandler};
 
@@ -53,9 +53,30 @@ impl<TRedis, TFile, TProtocol> SendFileService<TRedis, TFile, TProtocol> where T
             return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "User did not register the target device.".to_string()));
         }
 
-        match self.protocol_access.send_file() {
+        let buffer = match Self::get_file_stream(&arg_filename) {
+            Ok(b) => b,
+            Err(e) => return Err(e),
+        };
+
+        match self.protocol_access.send_file(&buffer) {
             Ok(_) => Ok("File sent!".to_string()),
             Err(e) => Err(e),
         }
+    }
+
+    fn get_file_stream(filename: &String) -> Result<Vec<u8>, Error> {
+        let file = match File::open(&filename) {
+            Ok(f) => f,
+            Err(_) => return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "Failed to open file.".to_string())),
+        };
+        let mut reader = BufReader::new(file);
+        let mut buffer = Vec::new();
+    
+        let _ = match reader.read_to_end(&mut buffer) {
+            Ok(n) => n,
+            Err(_) => return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "Failed to read file.".to_string())),
+        };
+
+        Ok(buffer)
     }
 }

@@ -9,7 +9,7 @@ impl FakeCommunicator {
 }
 
 impl ProtocolAccessable for FakeCommunicator {
-    fn send_file(&self) -> Result<(), std::io::Error> {
+    fn send_file(&self, buffer: &Vec<u8>) -> Result<(), std::io::Error> {
         println!("Communicating...");
         
         Ok(())

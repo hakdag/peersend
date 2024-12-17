@@ -29,11 +29,11 @@ impl User {
         self.devices.push(device);
     }
 
-    pub fn has_device(&self, arg_source_device: String) -> bool {
+    pub fn has_device(&self, arg_source_device: &String) -> bool {
         let mut n = 0;
         while n < self.devices.len() {
             let device = self.devices.get(n).unwrap();
-            if device.devicename == arg_source_device {
+            if device.devicename == *arg_source_device {
                 return true;
             }
 
@@ -41,6 +41,20 @@ impl User {
         }
 
         false
+    }
+
+    pub fn get_device_by_name(&self, device_name: &String) -> Option<&Device> {
+        let mut n = 0;
+        while n < self.devices.len() {
+            let device = self.devices.get(n).unwrap();
+            if device.devicename == *device_name {
+                return Some(device);
+            }
+
+            n += 1;
+        }
+
+        None
     }
 }
 

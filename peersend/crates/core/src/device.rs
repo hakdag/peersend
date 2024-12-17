@@ -7,11 +7,13 @@ use validify::Validify;
 pub struct Device {
     #[validate(length(min = 3))]
     pub devicename: String,
+
+    pub ip_address: Option<String>,
 }
 
 impl Device {
-    pub fn new(devicename: String) -> Self {
-        Self { devicename }
+    pub fn new(devicename: String, ip_address: Option<String>) -> Self {
+        Self { devicename, ip_address }
     }
 }
 

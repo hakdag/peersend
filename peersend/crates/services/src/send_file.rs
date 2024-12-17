@@ -45,11 +45,11 @@ impl<TRedis, TFile, TProtocol> SendFileService<TRedis, TFile, TProtocol> where T
             return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "File not found.".to_string()));
         }
 
-        if !user.has_device(arg_source_device) {
+        if !user.has_device(&arg_source_device) {
             return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "User did not register the source device.".to_string()));
         }
 
-        if !user.has_device(arg_target_device) {
+        if !user.has_device(&arg_target_device) {
             return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "User did not register the target device.".to_string()));
         }
 
@@ -58,7 +58,12 @@ impl<TRedis, TFile, TProtocol> SendFileService<TRedis, TFile, TProtocol> where T
             Err(e) => return Err(e),
         };
 
-        match self.protocol_access.send_file(&buffer) {
+        let target_device = match user.get_device_by_name(&arg_target_device) {
+            Some(d) => d,
+            None => return Err(std::io::Error::new(std::io::ErrorKind::NotFound, "Device not found.".to_string())),
+        };
+        
+        match self.protocol_access.send_file(target_device.ip_address.as_ref().unwrap().to_string(), &buffer) {
             Ok(_) => Ok("File sent!".to_string()),
             Err(e) => Err(e),
         }

@@ -12,3 +12,4 @@ validify = { version = "*" }
 serde = { version = "1.0", features = ["derive"] }
 jsonwebtoken = "9"
 chrono = { version = "*" }
+local-ip = "0.1"

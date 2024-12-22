@@ -1,0 +1,11 @@
+.site-header {
+  @apply fixed top-4 left-4 right-4 z-50;
+}
+
+.header-container {
+  @apply max-w-7xl mx-auto bg-gray-900/90 backdrop-blur-sm border border-gray-800 rounded-2xl;
+}
+
+.nav-link {
+  @apply text-gray-400 hover:text-brand-yellow transition-colors;
+}

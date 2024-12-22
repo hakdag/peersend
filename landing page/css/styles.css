@@ -1,0 +1,15 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Import component styles */
+@import './components/buttons.css';
+@import './components/cards.css';
+@import './layout/header.css';
+
+/* Base styles */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+}

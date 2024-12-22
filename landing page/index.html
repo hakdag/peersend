@@ -1,13 +1,209 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PeerSend - Secure peer-to-peer file sharing with end-to-end encryption. Transfer files directly between devices with no servers or limits.">
+    <meta name="keywords" content="file sharing, peer-to-peer, encryption, secure transfer, WebRTC">
+    <meta property="og:title" content="PeerSend - Secure P2P File Sharing">
+    <meta property="og:description" content="Transfer files directly between devices with end-to-end encryption. No servers, no limits, just secure sharing.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <title>PeerSend - Secure P2P File Sharing</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="min-h-screen bg-gray-900">
+    <header class="fixed top-4 left-4 right-4 z-50">
+        <div class="max-w-7xl mx-auto bg-gray-900/90 backdrop-blur-sm border border-gray-800 rounded-2xl">
+            <div class="py-4 px-6 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="text-brand-blue font-bold text-xl">&lt;...&gt;</span>
+                    <span class="font-bold text-xl text-white">peersend</span>
+                </div>
+                <nav class="hidden md:flex items-center gap-8">
+                    <a href="#features" class="text-gray-400 hover:text-brand-yellow transition-colors">Features</a>
+                    <a href="#how-it-works" class="text-gray-400 hover:text-brand-yellow transition-colors">How it Works</a>
+                    <a href="#security" class="text-gray-400 hover:text-brand-yellow transition-colors">Security</a>
+                </nav>
+                <a href="#" class="bg-brand-yellow text-gray-900 px-4 py-2 rounded-lg hover:bg-brand-yellow/90 transition-colors font-medium">
+                    Start Sharing
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="pt-32 pb-20 px-6 bg-gray-900">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center max-w-3xl mx-auto">
+                    <h1 class="text-5xl font-bold text-white mb-6">
+                        Secure Peer-to-Peer File Sharing Made Simple
+                    </h1>
+                    <p class="text-xl text-gray-400 mb-8">
+                        Transfer files directly between devices with end-to-end encryption.
+                        No servers, no limits, just secure sharing.
+                    </p>
+                    <div class="flex items-center justify-center gap-4">
+                        <button class="bg-brand-yellow text-gray-900 px-6 py-3 rounded-lg hover:bg-brand-yellow/90 transition-colors flex items-center gap-2 font-semibold">
+                            Start Sharing Now
+                            <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                        </button>
+                        <button class="border border-brand-yellow/20 text-brand-yellow px-6 py-3 rounded-lg hover:bg-brand-yellow/10 transition-colors flex items-center gap-2">
+                            Learn More
+                        </button>
+                    </div>
+                    <div class="mt-8 flex items-center justify-center gap-2 text-gray-400">
+                        <i data-lucide="shield" class="w-5 h-5 text-brand-yellow"></i>
+                        <span>End-to-end encrypted and completely private</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="py-20 bg-gray-800 px-6">
+            <div class="max-w-7xl mx-auto">
+                <h2 class="text-3xl font-bold text-center text-white mb-12">Why Choose PeerSend?</h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="feature-card">
+                        <i data-lucide="shield" class="feature-icon"></i>
+                        <h3 class="text-xl font-semibold text-white mb-2">End-to-End Encryption</h3>
+                        <p class="text-gray-400">Your files are encrypted before leaving your device, ensuring complete privacy.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i data-lucide="smartphone" class="feature-icon"></i>
+                        <h3 class="text-xl font-semibold text-white mb-2">Cross-Platform</h3>
+                        <p class="text-gray-400">Works seamlessly across desktop and mobile devices.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i data-lucide="zap" class="feature-icon"></i>
+                        <h3 class="text-xl font-semibold text-white mb-2">Lightning Fast</h3>
+                        <p class="text-gray-400">Direct peer-to-peer transfers for maximum speed.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i data-lucide="server" class="feature-icon"></i>
+                        <h3 class="text-xl font-semibold text-white mb-2">No Servers</h3>
+                        <p class="text-gray-400">Files transfer directly between devices, never touching a server.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i data-lucide="lock" class="feature-icon"></i>
+                        <h3 class="text-xl font-semibold text-white mb-2">Privacy First</h3>
+                        <p class="text-gray-400">No registration or personal information required.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i data-lucide="users" class="feature-icon"></i>
+                        <h3 class="text-xl font-semibold text-white mb-2">Open Source</h3>
+                        <p class="text-gray-400">Transparent, community-driven development you can trust.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section id="how-it-works" class="py-20 px-6 bg-gray-800">
+            <div class="max-w-7xl mx-auto">
+                <h2 class="text-3xl font-bold text-center text-white mb-12">How PeerSend Works</h2>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="relative">
+                        <div class="bg-gray-900 rounded-lg p-6 border border-brand-yellow/20">
+                            <div class="flex justify-between items-start mb-4">
+                                <span class="text-5xl font-bold text-brand-yellow">01</span>
+                                <i data-lucide="file-up" class="w-8 h-8 text-brand-yellow"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-white mb-2">Select File</h3>
+                            <p class="text-gray-400">Choose any file from your device that you want to share</p>
+                        </div>
+                        <i data-lucide="arrow-right" class="hidden md:block absolute top-1/2 -right-4 w-8 h-8 text-brand-yellow/30 transform -translate-y-1/2"></i>
+                    </div>
+                    <div class="relative">
+                        <div class="bg-gray-900 rounded-lg p-6 border border-brand-yellow/20">
+                            <div class="flex justify-between items-start mb-4">
+                                <span class="text-5xl font-bold text-brand-yellow">02</span>
+                                <i data-lucide="monitor" class="w-8 h-8 text-brand-yellow"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-white mb-2">Select Target Device</h3>
+                            <p class="text-gray-400">Choose the device you want to send your file to</p>
+                        </div>
+                        <i data-lucide="arrow-right" class="hidden md:block absolute top-1/2 -right-4 w-8 h-8 text-brand-yellow/30 transform -translate-y-1/2"></i>
+                    </div>
+                    <div class="relative">
+                        <div class="bg-gray-900 rounded-lg p-6 border border-brand-yellow/20">
+                            <div class="flex justify-between items-start mb-4">
+                                <span class="text-5xl font-bold text-brand-yellow">03</span>
+                                <i data-lucide="share-2" class="w-8 h-8 text-brand-yellow"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-white mb-2">Transfer</h3>
+                            <p class="text-gray-400">Your file is transferred directly to the target device</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Security Section -->
+        <section id="security" class="py-20 bg-gradient-to-b from-gray-800 to-gray-900 px-6">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-3xl font-bold text-white mb-4">Security You Can Trust</h2>
+                    <p class="text-gray-400">
+                        Your privacy and security are our top priorities. PeerSend uses cutting-edge
+                        WebRTC technology and encryption to ensure your files remain private.
+                    </p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="text-center">
+                        <div class="bg-gray-900 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-lg border border-brand-yellow/20">
+                            <i data-lucide="shield" class="w-8 h-8 text-brand-yellow"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-white mb-2">End-to-End Encryption</h3>
+                        <p class="text-gray-400">All transfers are encrypted using state-of-the-art protocols</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="bg-gray-900 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-lg border border-brand-yellow/20">
+                            <i data-lucide="lock" class="w-8 h-8 text-brand-yellow"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-white mb-2">No Data Storage</h3>
+                        <p class="text-gray-400">Files are never stored on any servers</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="bg-gray-900 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-lg border border-brand-yellow/20">
+                            <i data-lucide="eye" class="w-8 h-8 text-brand-yellow"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-white mb-2">Complete Privacy</h3>
+                        <p class="text-gray-400">No tracking, no logging, just secure file transfers</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-900 text-gray-400 py-12 px-6 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center gap-2 mb-6 md:mb-0">
+                    <span class="text-brand-blue font-bold text-xl">&lt;...&gt;</span>
+                    <span class="font-bold text-xl text-white">peersend</span>
+                </div>
+                <div class="flex items-center gap-6">
+                    <a href="https://github.com/hakdag/peersend" target="_blank" rel="noopener noreferrer" class="hover:text-brand-yellow transition-colors">
+                        <i data-lucide="github" class="w-6 h-6"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-800 text-center text-sm">
+                <p>© <span id="year"></span> PeerSend</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Set current year in footer
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+</body>
 </html>

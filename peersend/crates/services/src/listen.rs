@@ -12,9 +12,9 @@ impl<TProtocol> ListenService<TProtocol> where TProtocol: ProtocolAccessable {
 
     pub fn run(&self) -> Result<String, Error> {
         let ip = local_ip::get().unwrap();
-        match self.protocol_access.listen(ip.to_string()) {
+        match self.protocol_access.listen_file(ip.to_string()) {
             Ok(_) => Ok("Done!".to_string()),
             Err(e) => Err(e),
         }
-    }
+}
 }

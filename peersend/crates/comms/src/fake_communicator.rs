@@ -9,13 +9,13 @@ impl FakeCommunicator {
 }
 
 impl ProtocolAccessable for FakeCommunicator {
-    fn send_file(&self, _ip_address: String, _arg_filename: String) -> Result<(), std::io::Error> {
+    fn send_file(&self, _ip_address: &String, _arg_filename: String) -> Result<(), std::io::Error> {
         println!("Communicating...");
         
         Ok(())
     }
     
-    fn listen_file(&self, _ip_address: String) -> Result<(), std::io::Error> {
+    fn listen_file(&self, _ip_address: &String) -> Result<(), std::io::Error> {
         Ok(())
     }
 }

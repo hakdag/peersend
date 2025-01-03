@@ -62,7 +62,7 @@ impl<TRedis, TFile, TProtocol> SendFileService<TRedis, TFile, TProtocol> where T
             None => return Err(std::io::Error::new(std::io::ErrorKind::NotFound, "Device not found.".to_string())),
         };
         
-        match self.protocol_access.send_file(target_device.ip_address.as_ref().unwrap().to_string(), arg_filename) {
+        match self.protocol_access.send_file(&target_device.ip_address.as_ref().unwrap().to_string(), arg_filename) {
             Ok(_) => Ok("File sent!".to_string()),
             Err(e) => Err(e),
         }

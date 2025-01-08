@@ -1,5 +1,6 @@
 use core::command::{Command, CommandType};
 use std::io::Error;
+use comms::stun_communicator::STUNCommunicator;
 use comms::tcp_communicator::TCPCommunicator;
 use comms::udt_communicator::UDTCommunicator;
 use services::file::FileStorage;
@@ -24,24 +25,26 @@ impl CommandExecutor {
         let fs = FileStorage {};
         let tcpc = TCPCommunicator::new();
         let udtc = UDTCommunicator::new();
+        let stun_server = "stun.l.google.com:19302"; // Example STUN server
+        let stunc = STUNCommunicator::new(stun_server.to_string());
         match command.command_type {
             CommandType::Help => HelpService::run(),
             CommandType::Version => VersionService::run(),
             CommandType::CreateUser => CreateUserService::run(command),
             CommandType::Login => {
-                let ls: LoginService<RedisCommunication, FileStorage> = LoginService::new(rc, fs);
+                let ls = LoginService::new(rc, fs);
                 ls.run(command)
             },
             CommandType::RegisterDevice => {
-                let register_device_service: RegisterDeviceService<RedisCommunication, FileStorage> = RegisterDeviceService::new(rc, fs);
+                let register_device_service = RegisterDeviceService::new(rc, fs);
                 register_device_service.run(command)
             },
             CommandType::Listen => {
-                let ls = ListenService::new(tcpc);
+                let ls = ListenService::new(tcpc, stunc);
                 ls.run()
             }
             CommandType::Send => {
-                let send_file_service: SendFileService<RedisCommunication, FileStorage, UDTCommunicator> = SendFileService::new(rc, fs, udtc);
+                let send_file_service = SendFileService::new(rc, fs, udtc, stunc);
                 send_file_service.run(command)
             },
         }

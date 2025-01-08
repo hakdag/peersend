@@ -1,9 +1,8 @@
 use core::protocol::ProtocolAccessable;
-use std::net::{SocketAddr, ToSocketAddrs, UdpSocket};
+use std::net::UdpSocket;
 use std::fs::File;
 use std::io::{BufReader, BufWriter, Error, Read, Write};
 use std::time::Duration;
-use stunclient::StunClient;
 
 pub struct UDTCommunicator {}
 
@@ -11,39 +10,10 @@ impl UDTCommunicator {
     pub fn new() -> Self {
         Self {}
     }
-
-    pub fn discover_public_address(&self, stun_server: &str) -> Result<SocketAddr, Box<dyn std::error::Error>> {
-        // Parse the STUN server address
-        let stun_addr = stun_server
-            .to_socket_addrs()
-            .unwrap()
-            .filter(|x|x.is_ipv4())
-            .next()
-            .unwrap();
-        
-        // Bind a local UDP socket to communicate with the STUN server
-        let socket = UdpSocket::bind("0.0.0.0:0")?;
-        let local_addr = socket.local_addr()?;
-        println!("Local socket bound to: {}", local_addr);
-    
-        // Use the STUN client to query the public address
-        let client = StunClient::new(stun_addr);
-        let public_addr = client.query_external_address(&socket)?;
-        println!("Public address discovered: {}", public_addr);
-    
-        Ok(public_addr)
-    }
 }
 
 impl ProtocolAccessable for UDTCommunicator {
     fn send_file(&self, ip_address: &String, arg_filename: String) -> Result<(), Error> {
-        let stun_server = "stun.l.google.com:19302"; // Example STUN server
-        let public_addr = match self.discover_public_address(stun_server) {
-            Ok(addr) => addr,
-            Err(_) => return Err(std::io::Error::new(std::io::ErrorKind::NetworkUnreachable, "Connection to STUN server failed. Could not get public address.".to_string())),
-        };
-        println!("Source public address: {}", public_addr);
-    
         // Target public address (replace with actual target's public IP:PORT)
         // let target_addr = "127.0.0.1:8080";
         println!("Attempting to connect to target: {}", ip_address);
@@ -122,12 +92,6 @@ impl ProtocolAccessable for UDTCommunicator {
     }
 
     fn listen_file(&self, ip_address: &String) -> Result<(), Error> {
-        let stun_server = "stun.l.google.com:19302";
-        let public_addr = match self.discover_public_address(stun_server) {
-            Ok(addr) => addr,
-            Err(_) => return Err(std::io::Error::new(std::io::ErrorKind::NetworkUnreachable, "Connection to STUN server failed. Could not get public address.".to_string())),
-        };
-    
         // Bind to a local address
         let local_addr = "127.0.0.1:8080";
         let socket = match UdpSocket::bind(local_addr) {

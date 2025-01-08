@@ -1,16 +1,19 @@
 use std::{io::Error, path::Path};
-use core::{command::Command, protocol::ProtocolAccessable, storage::StorageAccess, user::User};
+use core::{command::Command, protocol::ProtocolAccessable, storage::StorageAccess, stun::STUNAccessible, user::User};
 use crate::{file::TokenStorageAccessable, get_arg, jwt::TokenHandler};
 
-pub struct SendFileService<TRedis, TFile, TProtocol> where TRedis: StorageAccess, TFile: TokenStorageAccessable, TProtocol: ProtocolAccessable {
+pub struct SendFileService<TRedis, TFile, TProtocol, TSTUNAccessable>
+    where TRedis: StorageAccess, TFile: TokenStorageAccessable, TProtocol: ProtocolAccessable, TSTUNAccessable: STUNAccessible {
     storage_access: TRedis,
     token_storage_access: TFile,
-    protocol_access: TProtocol
+    protocol_access: TProtocol,
+    stun_access: TSTUNAccessable
 }
 
-impl<TRedis, TFile, TProtocol> SendFileService<TRedis, TFile, TProtocol> where TRedis: StorageAccess, TFile: TokenStorageAccessable, TProtocol: ProtocolAccessable {
-    pub fn new(storage_access: TRedis, token_storage_access: TFile, protocol_access: TProtocol) -> Self {
-        Self { storage_access, token_storage_access, protocol_access }
+impl<TRedis, TFile, TProtocol, TSTUNAccessable> SendFileService<TRedis, TFile, TProtocol, TSTUNAccessable>
+    where TRedis: StorageAccess, TFile: TokenStorageAccessable, TProtocol: ProtocolAccessable, TSTUNAccessable: STUNAccessible {
+    pub fn new(storage_access: TRedis, token_storage_access: TFile, protocol_access: TProtocol, stun_access: TSTUNAccessable) -> Self {
+        Self { storage_access, token_storage_access, protocol_access, stun_access }
     }
 
     pub fn run(&self, command: &Command) -> Result<String, Error> {
@@ -21,6 +24,12 @@ impl<TRedis, TFile, TProtocol> SendFileService<TRedis, TFile, TProtocol> where T
         3- get target device's public ip from the server
         4- send the file
         */
+
+        let public_addr = match self.stun_access.discover_public_address() {
+            Ok(addr) => addr,
+            Err(_) => return Err(std::io::Error::new(std::io::ErrorKind::NetworkUnreachable, "Connection to STUN server failed. Could not get public address.".to_string())),
+        };
+        println!("Source public address: {}", public_addr);
 
         // read token
         let token = match self.token_storage_access.read() {

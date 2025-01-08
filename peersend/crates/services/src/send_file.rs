@@ -14,6 +14,14 @@ impl<TRedis, TFile, TProtocol> SendFileService<TRedis, TFile, TProtocol> where T
     }
 
     pub fn run(&self, command: &Command) -> Result<String, Error> {
+
+        /*
+        1- get public ip from stun
+        2- tell server public ip
+        3- get target device's public ip from the server
+        4- send the file
+        */
+
         // read token
         let token = match self.token_storage_access.read() {
             Ok(t) => t,

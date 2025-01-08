@@ -8,7 +8,7 @@ pub struct RedisCommunication {
 
 impl RedisCommunication {
     pub fn new() -> Result<RedisCommunication, Error> {
-        let client = Client::open("redis://192.168.1.105:6379").unwrap();
+        let client = Client::open("redis://127.0.0.1:6379").unwrap();
         Result::Ok(RedisCommunication { client: client })
     }
 }

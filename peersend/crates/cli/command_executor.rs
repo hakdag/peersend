@@ -1,6 +1,7 @@
 use core::command::{Command, CommandType};
 use std::io::Error;
 use comms::tcp_communicator::TCPCommunicator;
+use comms::udt_communicator::UDTCommunicator;
 use services::file::FileStorage;
 use services::help::HelpService;
 use services::listen::ListenService;
@@ -22,6 +23,7 @@ impl CommandExecutor {
         };
         let fs = FileStorage {};
         let tcpc = TCPCommunicator::new();
+        let udtc = UDTCommunicator::new();
         match command.command_type {
             CommandType::Help => HelpService::run(),
             CommandType::Version => VersionService::run(),
@@ -39,7 +41,7 @@ impl CommandExecutor {
                 ls.run()
             }
             CommandType::Send => {
-                let send_file_service: SendFileService<RedisCommunication, FileStorage, TCPCommunicator> = SendFileService::new(rc, fs, tcpc);
+                let send_file_service: SendFileService<RedisCommunication, FileStorage, UDTCommunicator> = SendFileService::new(rc, fs, udtc);
                 send_file_service.run(command)
             },
         }

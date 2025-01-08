@@ -59,7 +59,7 @@ impl TCPCommunicator {
 }
 
 impl ProtocolAccessable for TCPCommunicator {
-    fn send_file(&self, ip_address: String, arg_filename: String) -> Result<(), std::io::Error> {
+    fn send_file(&self, ip_address: &String, arg_filename: String) -> Result<(), std::io::Error> {
         print!("Connecting to device...");
 
         match TcpStream::connect(format!("{ip_address}:1234")) {
@@ -107,7 +107,7 @@ impl ProtocolAccessable for TCPCommunicator {
         }
     }
     
-    fn listen_file(&self, ip_address: String) -> Result<(), std::io::Error> {
+    fn listen_file(&self, ip_address: &String) -> Result<(), std::io::Error> {
         let listener = TcpListener::bind(format!("{ip_address}:1234")).expect("Failed to bind address");
         println!("Listening file transfer...");
 

@@ -14,6 +14,14 @@ impl<TRedis, TFile, TProtocol> SendFileService<TRedis, TFile, TProtocol> where T
     }
 
     pub fn run(&self, command: &Command) -> Result<String, Error> {
+
+        /*
+        1- get public ip from stun
+        2- tell server public ip
+        3- get target device's public ip from the server
+        4- send the file
+        */
+
         // read token
         let token = match self.token_storage_access.read() {
             Ok(t) => t,
@@ -62,7 +70,7 @@ impl<TRedis, TFile, TProtocol> SendFileService<TRedis, TFile, TProtocol> where T
             None => return Err(std::io::Error::new(std::io::ErrorKind::NotFound, "Device not found.".to_string())),
         };
         
-        match self.protocol_access.send_file(target_device.ip_address.as_ref().unwrap().to_string(), arg_filename) {
+        match self.protocol_access.send_file(&target_device.ip_address.as_ref().unwrap().to_string(), arg_filename) {
             Ok(_) => Ok("File sent!".to_string()),
             Err(e) => Err(e),
         }

@@ -19,7 +19,8 @@ members = [
   "crates/core",
   "crates/comms",
   "crates/mediators",
-  "crates/services"
+  "crates/services",
+  "api"
 ]
 
 [dependencies]

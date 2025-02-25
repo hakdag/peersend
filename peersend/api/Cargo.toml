@@ -1,0 +1,8 @@
+[package]
+name = "api"
+version = "0.1.0"
+authors = ["Hakan Akdag <hakanakdag46@gmail.com>"]
+edition = "2021"
+
+[dependencies]
+actix-web = "4"

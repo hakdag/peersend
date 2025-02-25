@@ -1,3 +1,5 @@
+use std::io::Error;
+
 use redis::{from_redis_value, FromRedisValue, ToRedisArgs};
 use bincode::{serialize, deserialize};
 use serde::{Serialize, Deserialize};
@@ -71,4 +73,9 @@ impl FromRedisValue for User {
         let obj: User = deserialize(&r).unwrap();
         Ok(obj)
     }
+}
+
+pub trait UsersAccessable {
+    fn get_token(&self) -> Result<String, Error>;
+    fn get_user(&self) -> Result<User, Error>;
 }

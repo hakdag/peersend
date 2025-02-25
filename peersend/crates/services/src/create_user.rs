@@ -2,17 +2,14 @@ use std::io::Error;
 use core::{command::Command, storage::StorageAccess, user::User};
 use validify::Validate;
 
-use comms::redis_communication::RedisCommunication;
 use crate::get_arg;
 
-pub struct CreateUserService {}
+pub struct CreateUserService<TRedis> where TRedis: StorageAccess {
+    storage_access: TRedis,
+}
 
-impl CreateUserService {
-    pub fn run(command: &Command) -> Result<String, Error> {
-        let rc = match RedisCommunication::new() {
-            Ok(rc) => rc,
-            Err(e) => return Err(e),
-        };
+impl<TRedis> CreateUserService<TRedis> where TRedis: StorageAccess {
+    pub fn run(&self, command: &Command) -> Result<String, Error> {
         let arguments = match &command.arguments {
             Some(args) => args,
             None => &Vec::new(),
@@ -28,7 +25,7 @@ impl CreateUserService {
             return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, format!("Invalid {} entered.", errs[0].field_name().unwrap()).to_string()));
         }
 
-        match rc.set(key, user) {
+        match self.storage_access.set(key, user) {
             Ok(_) => Result::Ok(format!("User with username '{}' is created.", username)),
             Err(e) => Result::Err(e),
         }

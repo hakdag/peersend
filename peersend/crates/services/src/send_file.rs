@@ -1,19 +1,32 @@
 use std::{io::Error, path::Path};
-use core::{command::Command, protocol::ProtocolAccessable, storage::StorageAccess, stun::STUNAccessible, user::User};
-use crate::{file::TokenStorageAccessable, get_arg, jwt::TokenHandler};
+use core::{api::ApiAccess, command::Command, protocol::ProtocolAccessable, storage::StorageAccess, stun::STUNAccessible, user::{User, UsersAccessable}};
+use crate::get_arg;
 
-pub struct SendFileService<TRedis, TFile, TProtocol, TSTUNAccessable>
-    where TRedis: StorageAccess, TFile: TokenStorageAccessable, TProtocol: ProtocolAccessable, TSTUNAccessable: STUNAccessible {
+pub struct SendFileService<TRedis, TProtocol, TSTUNAccessable, TUsersAccessable, TApiAccess>
+    where TRedis: StorageAccess,
+        TProtocol: ProtocolAccessable,
+        TSTUNAccessable: STUNAccessible,
+        TUsersAccessable: UsersAccessable,
+        TApiAccess: ApiAccess {
     storage_access: TRedis,
-    token_storage_access: TFile,
     protocol_access: TProtocol,
-    stun_access: TSTUNAccessable
+    stun_access: TSTUNAccessable,
+    users_access: TUsersAccessable,
+    api_access: TApiAccess
 }
 
-impl<TRedis, TFile, TProtocol, TSTUNAccessable> SendFileService<TRedis, TFile, TProtocol, TSTUNAccessable>
-    where TRedis: StorageAccess, TFile: TokenStorageAccessable, TProtocol: ProtocolAccessable, TSTUNAccessable: STUNAccessible {
-    pub fn new(storage_access: TRedis, token_storage_access: TFile, protocol_access: TProtocol, stun_access: TSTUNAccessable) -> Self {
-        Self { storage_access, token_storage_access, protocol_access, stun_access }
+impl<TRedis, TProtocol, TSTUNAccessable, TUsersAccessable, TApiAccess> SendFileService<TRedis, TProtocol, TSTUNAccessable, TUsersAccessable, TApiAccess>
+    where TRedis: StorageAccess,
+        TProtocol: ProtocolAccessable,
+        TSTUNAccessable: STUNAccessible,
+        TUsersAccessable: UsersAccessable,
+        TApiAccess: ApiAccess {
+    pub fn new(storage_access: TRedis,
+        protocol_access: TProtocol,
+        stun_access: TSTUNAccessable,
+        users_access: TUsersAccessable,
+        api_access: TApiAccess) -> Self {
+        Self { storage_access, protocol_access, stun_access, users_access, api_access }
     }
 
     pub fn run(&self, command: &Command) -> Result<String, Error> {
@@ -31,24 +44,6 @@ impl<TRedis, TFile, TProtocol, TSTUNAccessable> SendFileService<TRedis, TFile, T
         };
         println!("Source public address: {}", public_addr);
 
-        // read token
-        let token = match self.token_storage_access.read() {
-            Ok(t) => t,
-            Err(e) => return Err(e),
-        };
-
-        // validate token
-        // get user Id from token's sub claim
-        let token_handler = TokenHandler::new();
-        let user_id = match token_handler.validate(token) {
-            Ok(id) => id,
-            Err(e) => return Err(e),
-        };
-        let user: User = match self.storage_access.get(user_id) {
-            Ok(u) => u,
-            Err(e) => return Result::Err(e),
-        };
-
         let arguments = match &command.arguments {
             Some(args) => args,
             None => &Vec::new(),
@@ -62,6 +57,10 @@ impl<TRedis, TFile, TProtocol, TSTUNAccessable> SendFileService<TRedis, TFile, T
             return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "File not found.".to_string()));
         }
 
+        let user = match self.users_access.get_user() {
+            Ok(u) => u,
+            Err(e) => return Err(e),
+        };
         if !user.has_device(&arg_source_device) {
             return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "User did not register the source device.".to_string()));
         }
@@ -69,7 +68,7 @@ impl<TRedis, TFile, TProtocol, TSTUNAccessable> SendFileService<TRedis, TFile, T
         if !user.has_device(&arg_target_device) {
             return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "User did not register the target device.".to_string()));
         }
-        
+
         self.send_file(user, arg_filename, arg_target_device)
     }
 
@@ -79,7 +78,12 @@ impl<TRedis, TFile, TProtocol, TSTUNAccessable> SendFileService<TRedis, TFile, T
             None => return Err(std::io::Error::new(std::io::ErrorKind::NotFound, "Device not found.".to_string())),
         };
         
-        match self.protocol_access.send_file(&target_device.ip_address.as_ref().unwrap().to_string(), arg_filename) {
+        let target_device_ip_address: String = match self.api_access.get_target_ipaddress(&arg_target_device) {
+            Ok(addr) => addr,
+            Err(e) => return Err(e)
+        };
+        
+        match self.protocol_access.send_file(&target_device_ip_address, arg_filename) {
             Ok(_) => Ok("File sent!".to_string()),
             Err(e) => Err(e),
         }

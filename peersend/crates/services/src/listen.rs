@@ -14,6 +14,10 @@ impl<TProtocol, TSTUNAccessable, TApiAccess> ListenService<TProtocol, TSTUNAcces
     where TProtocol: ProtocolAccessable,
         TSTUNAccessable: STUNAccessible,
         TApiAccess: ApiAccess {
+    pub fn new(protocol_access: TProtocol, stun_access: TSTUNAccessable, api_access: TApiAccess) -> Self {
+        Self { protocol_access, stun_access, api_access }
+    }
+
     pub fn run(&self) -> Result<String, Error> {
 
         /*
@@ -38,5 +42,5 @@ impl<TProtocol, TSTUNAccessable, TApiAccess> ListenService<TProtocol, TSTUNAcces
             Ok(_) => Ok("Done!".to_string()),
             Err(e) => Err(e),
         }
-}
+    }
 }

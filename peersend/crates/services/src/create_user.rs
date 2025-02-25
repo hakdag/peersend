@@ -9,6 +9,10 @@ pub struct CreateUserService<TRedis> where TRedis: StorageAccess {
 }
 
 impl<TRedis> CreateUserService<TRedis> where TRedis: StorageAccess {
+    pub fn new(storage_access: TRedis) -> Self {
+        Self { storage_access }
+    }
+
     pub fn run(&self, command: &Command) -> Result<String, Error> {
         let arguments = match &command.arguments {
             Some(args) => args,

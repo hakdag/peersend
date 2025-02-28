@@ -2,31 +2,17 @@ use core::storage::StorageAccess;
 
 use actix_web::{guard, web, App, HttpRequest, HttpResponse, HttpServer};
 use comms::storage_accesses::redis_communication::RedisCommunication;
+use models::peer_session::PeerSession;
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
 use services::jwt::token_handler::TokenHandler;
+
+mod models;
 
 /*
 Have a key-value pair list of target and source ips
 target device will first tell its ip address, user id (or name), and device name
 source device then will ask for target devices ip by providing device name and user id
 */
-
-
-#[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct PeerSession {
-    id: String,
-    user_id: String,
-    device_name: String,
-    ip_address: String,
-}
-
-impl PeerSession {
-    fn new(user_id: String, device_name: String, ip_address: String) -> Self { 
-        let id = Uuid::new_v4().to_string();
-        Self { id, user_id, device_name, ip_address }
-    }
-}
 
 pub async fn get_ipaddress(req: HttpRequest, body: web::Bytes) -> HttpResponse {
     let token_raw = get_token(req);
@@ -57,10 +43,15 @@ pub async fn get_ipaddress(req: HttpRequest, body: web::Bytes) -> HttpResponse {
         Ok(rc) => rc,
         Err(_) => return HttpResponse::InternalServerError().finish()
     };
+
+    /*
     let session = match data.sessions.iter().find(|s| s.device_name == device_name) {
         Some(s) => s,
         None => return HttpResponse::BadRequest().body("Device or Session not found."),
     };
+    */
+
+    let session = PeerSession::new("123".to_string(), device_name, "1.1.1.1".to_string());
 
     HttpResponse::Ok().body(session.ip_address.clone())
 }

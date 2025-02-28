@@ -9,6 +9,7 @@ edition = "2021"
 core = { path = "../core" }
 stunclient = "*"
 udt = "*"
+ureq = "3.0.6"
 
 [dependencies.redis]
 version = "*"

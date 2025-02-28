@@ -1,0 +1,62 @@
+use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
+use warp::Filter;
+use serde::{Deserialize, Serialize};
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+struct Device {
+    user_id: String,
+    device_name: String,
+    ip_address: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct DeviceQuery {
+    user_id: String,
+    device_name: String,
+}
+
+type Devices = Arc<Mutex<HashMap<(String, String), String>>>;
+
+#[tokio::main]
+async fn main() {
+    // Shared state for devices
+    let devices: Devices = Arc::new(Mutex::new(HashMap::new()));
+
+    // POST /devices
+    let devices_clone = devices.clone();
+    let add_device = warp::post()
+        .and(warp::path("devices"))
+        .and(warp::body::json())
+        .and_then(move |device: Device| {
+            let devices = devices_clone.clone();
+            async move {
+                let mut devices_lock = devices.lock().unwrap();
+                devices_lock.insert((device.user_id.clone(), device.device_name.clone()), device.ip_address.clone());
+                Ok::<_, warp::Rejection>(warp::reply::with_status("Device added", warp::http::StatusCode::OK))
+            }
+        });
+
+    // POST /device
+    let devices_clone = devices.clone();
+    let get_device = warp::post()
+        .and(warp::path("device"))
+        .and(warp::body::json())
+        .and_then(move |query: DeviceQuery| {
+            let devices = devices_clone.clone();
+            async move {
+                let devices_lock = devices.lock().unwrap();
+                if let Some(ip_address) = devices_lock.get(&(query.user_id, query.device_name)) {
+                    Ok::<_, warp::Rejection>(warp::reply::json(&ip_address))
+                } else {
+                    Err(warp::reject::not_found())
+                }
+            }
+        });
+
+    // Combine routes
+    let routes = add_device.or(get_device);
+
+    // Start the server
+    warp::serve(routes).run(([127, 0, 0, 1], 3030)).await;
+}

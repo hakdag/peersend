@@ -1,13 +1,13 @@
 use std::fs::File;
 use std::io::{prelude::*, Error};
 use std::path::Path;
-
-pub trait TokenStorageAccessable {
-    fn save(&self, token: String) -> Result<(), Error>;
-    fn read(&self) -> Result<String, Error>;
-}
+use core::token::TokenStorageAccessable;
 
 pub struct FileStorage {}
+
+impl FileStorage {
+    pub fn new() -> Self { Self {} }
+}
 
 impl TokenStorageAccessable for FileStorage {
     fn save(&self, token: String) -> Result<(), Error> {

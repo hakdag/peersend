@@ -9,6 +9,7 @@ pub mod send_file;
 pub mod jwt;
 pub mod file;
 pub mod listen;
+pub mod user;
 
 pub fn get_arg(arguments: &Vec<CommandArgument>, index: usize) -> String {
     match arguments.get(index) {

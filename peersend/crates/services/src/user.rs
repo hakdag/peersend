@@ -1,7 +1,7 @@
 use core::{storage::StorageAccess, token::TokenStorageAccessable, user::{User, UsersAccessable}};
 use std::io::Error;
 
-use crate::jwt::TokenHandler;
+use crate::jwt::token_handler::TokenHandler;
 
 pub struct UserService<TRedis, TTokenAccess>
     where TRedis: StorageAccess, TTokenAccess: TokenStorageAccessable {

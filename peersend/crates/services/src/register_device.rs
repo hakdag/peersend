@@ -1,6 +1,6 @@
 use std::io::Error;
 use core::{command::Command, device::Device, storage::StorageAccess, token::TokenStorageAccessable, user::User};
-use crate::{get_arg, jwt::TokenHandler};
+use crate::{get_arg, jwt::token_handler::TokenHandler};
 extern crate local_ip;
 
 pub struct RegisterDeviceService<TRedis, TFile> where TRedis: StorageAccess, TFile: TokenStorageAccessable {

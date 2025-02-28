@@ -1,32 +1,28 @@
 use std::{io::Error, path::Path};
-use core::{api::ApiAccess, command::Command, protocol::ProtocolAccessable, storage::StorageAccess, stun::STUNAccessible, user::{User, UsersAccessable}};
+use core::{api::ApiAccess, command::Command, protocol::ProtocolAccessable, stun::STUNAccessible, user::UsersAccessable};
 use crate::get_arg;
 
-pub struct SendFileService<TRedis, TProtocol, TSTUNAccessable, TUsersAccessable, TApiAccess>
-    where TRedis: StorageAccess,
-        TProtocol: ProtocolAccessable,
+pub struct SendFileService<TProtocol, TSTUNAccessable, TUsersAccessable, TApiAccess>
+    where TProtocol: ProtocolAccessable,
         TSTUNAccessable: STUNAccessible,
         TUsersAccessable: UsersAccessable,
         TApiAccess: ApiAccess {
-    storage_access: TRedis,
     protocol_access: TProtocol,
     stun_access: TSTUNAccessable,
     users_access: TUsersAccessable,
     api_access: TApiAccess
 }
 
-impl<TRedis, TProtocol, TSTUNAccessable, TUsersAccessable, TApiAccess> SendFileService<TRedis, TProtocol, TSTUNAccessable, TUsersAccessable, TApiAccess>
-    where TRedis: StorageAccess,
-        TProtocol: ProtocolAccessable,
+impl<TProtocol, TSTUNAccessable, TUsersAccessable, TApiAccess> SendFileService<TProtocol, TSTUNAccessable, TUsersAccessable, TApiAccess>
+    where TProtocol: ProtocolAccessable,
         TSTUNAccessable: STUNAccessible,
         TUsersAccessable: UsersAccessable,
         TApiAccess: ApiAccess {
-    pub fn new(storage_access: TRedis,
-        protocol_access: TProtocol,
+    pub fn new(protocol_access: TProtocol,
         stun_access: TSTUNAccessable,
         users_access: TUsersAccessable,
         api_access: TApiAccess) -> Self {
-        Self { storage_access, protocol_access, stun_access, users_access, api_access }
+        Self { protocol_access, stun_access, users_access, api_access }
     }
 
     pub fn run(&self, command: &Command) -> Result<String, Error> {
@@ -69,15 +65,10 @@ impl<TRedis, TProtocol, TSTUNAccessable, TUsersAccessable, TApiAccess> SendFileS
             return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "User did not register the target device.".to_string()));
         }
 
-        self.send_file(user, arg_filename, arg_target_device)
+        self.send_file(arg_filename, arg_target_device)
     }
 
-    fn send_file(&self, user: User, arg_filename: String, arg_target_device: String) -> Result<String, Error> {
-        let target_device = match user.get_device_by_name(&arg_target_device) {
-            Some(d) => d,
-            None => return Err(std::io::Error::new(std::io::ErrorKind::NotFound, "Device not found.".to_string())),
-        };
-        
+    fn send_file(&self, arg_filename: String, arg_target_device: String) -> Result<String, Error> {
         let target_device_ip_address: String = match self.api_access.get_target_ipaddress(&arg_target_device) {
             Ok(addr) => addr,
             Err(e) => return Err(e)

@@ -35,11 +35,7 @@ impl CommandExecutor {
             CommandType::Help => HelpService::run(),
             CommandType::Version => VersionService::run(),
             CommandType::CreateUser => {
-                let rc1 = match RedisCommunication::new() {
-                    Ok(rc) => rc,
-                    Err(e) => return Err(e),
-                };
-                return CreateUserService::new(rc1).run(command);
+                return CreateUserService::new(api).run(command);
             },
             CommandType::Login => {
                 let rc2 = match RedisCommunication::new() {

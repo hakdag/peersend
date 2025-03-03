@@ -1,16 +1,15 @@
 use std::io::Error;
-use core::{command::Command, storage::StorageAccess, user::User};
-use validify::Validate;
+use core::{api::ApiAccess, command::Command, user::User};
 
 use crate::get_arg;
 
-pub struct CreateUserService<TRedis> where TRedis: StorageAccess {
-    storage_access: TRedis,
+pub struct CreateUserService<TApiAccess> where TApiAccess: ApiAccess {
+    api_access: TApiAccess
 }
 
-impl<TRedis> CreateUserService<TRedis> where TRedis: StorageAccess {
-    pub fn new(storage_access: TRedis) -> Self {
-        Self { storage_access }
+impl<TApiAccess> CreateUserService<TApiAccess> where TApiAccess: ApiAccess {
+    pub fn new(api_access: TApiAccess) -> Self {
+        Self { api_access }
     }
 
     pub fn run(&self, command: &Command) -> Result<String, Error> {
@@ -18,10 +17,14 @@ impl<TRedis> CreateUserService<TRedis> where TRedis: StorageAccess {
             Some(args) => args,
             None => &Vec::new(),
         };
-        let key = get_arg(arguments, 0);
         let username = get_arg(arguments, 0);
         let user = User::new(username.clone(), get_arg(arguments, 1), get_arg(arguments, 2));
 
+        match self.api_access.create_user(user) {
+            Ok(_) => Result::Ok(format!("User with username '{}' is created.", username)),
+            Err(e) => Result::Err(e),
+        }
+        /*
         let res = user.validate();
         if res.is_err() {
             let err = res.unwrap_err();
@@ -33,5 +36,6 @@ impl<TRedis> CreateUserService<TRedis> where TRedis: StorageAccess {
             Ok(_) => Result::Ok(format!("User with username '{}' is created.", username)),
             Err(e) => Result::Err(e),
         }
+        */
     }
 }

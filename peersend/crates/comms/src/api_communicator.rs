@@ -1,4 +1,4 @@
-use core::{api::ApiAccess, token::TokenStorageAccessable};
+use core::{api::ApiAccess, token::TokenStorageAccessable, user::User};
 use std::{io::{Error, ErrorKind}, str::FromStr};
 
 use ureq::{http::Uri, Error as UreqError};
@@ -61,6 +61,26 @@ impl<TTokenAccess> ApiAccess for APICommunicator<TTokenAccess> where TTokenAcces
         match ureq::post(uri)
             .header("PS-Token", token)
             .send(ip_address) {
+                Ok(_) => Ok(()),
+                Err(UreqError::StatusCode(code)) => {
+                    return Err(match code {
+                        404 => Error::new(ErrorKind::NotFound, "Resource not found"),
+                        500..=599 => Error::new(ErrorKind::Other, "Server error"),
+                        _ => Error::new(ErrorKind::Other, format!("HTTP status error: {}", code)),
+                    });
+                },
+                Err(_) => return Err(Error::new(ErrorKind::NetworkUnreachable, "Server not reachable"))
+            }
+    }
+
+    fn create_user(&self, user: User) -> Result<(), Error> {
+        let uri = match Uri::from_str(&format!("{}/user", self.server_address)) {
+            Ok(u) => u,
+            Err(_) => return Err(Error::new(ErrorKind::InvalidInput, "Invalid server address provided.".to_string())),
+        };
+        match ureq::post(uri)
+            .header("content-type", "application/json")
+            .send(serde_json::to_string(&user).unwrap()) {
                 Ok(_) => Ok(()),
                 Err(UreqError::StatusCode(code)) => {
                     return Err(match code {

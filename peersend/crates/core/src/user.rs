@@ -12,15 +12,18 @@ pub struct User {
     pub username: String,
     #[validate(email)]
     pub email: String,
-    #[validate(length(min = 3))]
-    pub password: String,
 
     pub devices: Vec<Device>,
 }
 
 impl User {
-    pub fn new(username: String, password: String, email: String) -> User {
-        User { username, password, email, devices: Vec::new() }
+    pub fn new(username: String, email: String, devices: Option<Vec<Device>>) -> Self {
+        if devices.is_some() {
+            Self { username, email, devices: devices.unwrap() }
+        }
+        else {
+            Self { username, email, devices: Vec::new() }
+        }
     }
 
     pub fn user_name(&self) -> &String {

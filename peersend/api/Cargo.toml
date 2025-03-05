@@ -9,10 +9,10 @@ core = { path = "../crates/core" }
 comms = { path = "../crates/comms" }
 services = { path = "../crates/services" }
 actix-web = "4"
-serde = "1.0.218"
+serde = { version = "1.0.218", features = ["derive"] }
 validify = "2.0.0"
 jsonwebtoken = "9.3.1"
-redis = "0.29.0"
+bincode = "1.3.3"
 
 [dependencies.uuid]
 version = "1.15.0"

@@ -9,7 +9,7 @@ impl LoginParser {
     pub fn parse(args: &Vec<String>) -> Result<Command, Error> {
         let count = args.len();
         if count != 4 {
-            return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "Login is expecting parameters: username, password"));
+            return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "Login is expecting parameters: email, password"));
         }
 
         let arguments = Vec::from([

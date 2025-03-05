@@ -1,9 +1,9 @@
-use core::create_user::CreateUserRequest;
 use core::device::Device;
-use core::login::LoginRequest;
+use core::requests::create_user::CreateUserRequest;
+use core::requests::login::LoginRequest;
 use core::user::User;
 use std::io::{self, BufRead, Write};
-use std::fs::{self, File};
+use std::fs::{self, File, OpenOptions};
 use std::path::Path;
 
 use crate::models::error::FileSystemError;
@@ -70,13 +70,13 @@ impl FileAccess {
         Ok(password)
     }
 
-    fn constract_user(&self, email: String) -> Result<User, FileSystemError> {
-        let username = fs::read_to_string(format!("{}/username", email))?;
-        let email = fs::read_to_string(format!("{}/email", email))?;
+    fn constract_user(&self, id: String) -> Result<User, FileSystemError> {
+        let username = fs::read_to_string(format!("{}/username", id))?;
+        let email = fs::read_to_string(format!("{}/email", id))?;
 
         // read devices
         let mut devices: Vec<Device> = Vec::new();
-        if let Ok(lines) = self.read_lines(format!("{}/devices", email)) {
+        if let Ok(lines) = self.read_lines(format!("{}/devices", id)) {
             for devicename in lines.map_while(Result::ok) {
                 let device = Device::new(devicename, None);
                 devices.push(device);
@@ -91,5 +91,17 @@ impl FileAccess {
     {
         let file = File::open(filename)?;
         Ok(io::BufReader::new(file).lines())
+    }
+    
+    pub(crate) fn add_device_to_user(&self, user: &User, devicename: &str) -> Result<(), FileSystemError> {
+        let mut devices_f = OpenOptions::new()
+            .write(true)
+            .append(true)
+            .open(format!("{}/devices", user.email))
+            .unwrap();
+
+        devices_f.write_all(devicename.as_bytes())?;
+        devices_f.write("\n".to_string().as_bytes())?;
+        Ok(())
     }
 }

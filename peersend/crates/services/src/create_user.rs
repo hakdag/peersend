@@ -1,5 +1,5 @@
 use std::io::Error;
-use core::{api::ApiAccess, command::Command, create_user::CreateUserRequest};
+use core::{api::ApiAccess, command::Command, requests::create_user::CreateUserRequest};
 
 use crate::get_arg;
 

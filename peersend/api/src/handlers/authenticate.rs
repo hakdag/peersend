@@ -1,4 +1,4 @@
-use core::login::LoginRequest;
+use core::requests::login::LoginRequest;
 use services::jwt::token_handler::TokenHandler;
 use crate::accesses::file::FileAccess;
 
@@ -24,7 +24,7 @@ pub async fn authenticate(_: HttpRequest, body: web::Json<LoginRequest>) -> Http
             }
 
             let token_handler = TokenHandler::new();
-            let token = token_handler.generate(login_request).unwrap();
+            let token = token_handler.generate(&login_request.email).unwrap();
             HttpResponse::Ok().body(token)
         },
         Err(e) => {

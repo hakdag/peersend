@@ -8,11 +8,11 @@ use comms::protocols::udt_communicator::UDTCommunicator;
 use services::file::FileStorage;
 use services::help::HelpService;
 use services::listen::ListenService;
+use services::register_device::RegisterDeviceService;
 use services::user::UserService;
 use services::version::VersionService;
 use services::create_user::CreateUserService;
 use services::login::LoginService;
-use services::register_device::RegisterDeviceService;
 use services::send_file::SendFileService;
 
 pub struct CommandExecutor;
@@ -36,14 +36,7 @@ impl CommandExecutor {
             CommandType::Version => VersionService::run(),
             CommandType::CreateUser => CreateUserService::new(api).run(command),
             CommandType::Login => LoginService::new(api, FileStorage::new()).run(command),
-            CommandType::RegisterDevice => {
-                let rc3 = match RedisCommunication::new() {
-                    Ok(rc) => rc,
-                    Err(e) => return Err(e),
-                };
-                let register_device_service = RegisterDeviceService::new(rc3, FileStorage::new());
-                register_device_service.run(command)
-            },
+            CommandType::RegisterDevice => RegisterDeviceService::new(api, FileStorage::new()).run(command),
             CommandType::Listen => {
                 let ls = ListenService::new(tcpc, stunc, api);
                 ls.run()

@@ -8,5 +8,4 @@ pub mod protocol;
 pub mod stun;
 pub mod api;
 pub mod token;
-pub mod login;
-pub mod create_user;
+pub mod requests;

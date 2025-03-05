@@ -27,9 +27,7 @@ members = [
 core = { path = "./crates/core" }
 services = { path = "./crates/services" }
 comms = { path = "./crates/comms" }
-
-[dependencies.redis]
-version = "*"
+redis = "0.29.0"
 
 [dev-dependencies]
 

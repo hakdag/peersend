@@ -1,4 +1,4 @@
-use core::{api::ApiAccess, token::TokenStorageAccessable, user::User};
+use core::{api::ApiAccess, create_user::CreateUserRequest, login::LoginRequest, token::TokenStorageAccessable};
 use std::{io::{Error, ErrorKind}, str::FromStr};
 
 use ureq::{http::Uri, Error as UreqError};
@@ -73,14 +73,14 @@ impl<TTokenAccess> ApiAccess for APICommunicator<TTokenAccess> where TTokenAcces
             }
     }
 
-    fn create_user(&self, user: User) -> Result<(), Error> {
+    fn create_user(&self, request: CreateUserRequest) -> Result<(), Error> {
         let uri = match Uri::from_str(&format!("{}/user", self.server_address)) {
             Ok(u) => u,
             Err(_) => return Err(Error::new(ErrorKind::InvalidInput, "Invalid server address provided.".to_string())),
         };
         match ureq::post(uri)
             .header("content-type", "application/json")
-            .send(serde_json::to_string(&user).unwrap()) {
+            .send(serde_json::to_string(&request).unwrap()) {
                 Ok(_) => Ok(()),
                 Err(UreqError::StatusCode(code)) => {
                     return Err(match code {
@@ -92,4 +92,28 @@ impl<TTokenAccess> ApiAccess for APICommunicator<TTokenAccess> where TTokenAcces
                 Err(_) => return Err(Error::new(ErrorKind::NetworkUnreachable, "Server not reachable"))
             }
     }
+    
+    fn login(&self, login_request: LoginRequest) -> Result<String, Error> {
+        let uri = match Uri::from_str(&format!("{}/authenticate", self.server_address)) {
+            Ok(u) => u,
+            Err(_) => return Err(Error::new(ErrorKind::InvalidInput, "Invalid server address provided.".to_string())),
+        };
+        let mut response = match ureq::post(uri)
+            .header("content-type", "application/json")
+            .send(serde_json::to_string(&login_request).unwrap()) {
+                Ok(body) => body,
+                Err(UreqError::StatusCode(code)) => {
+                    return Err(match code {
+                        404 => Error::new(ErrorKind::NotFound, "Resource not found"),
+                        500..=599 => Error::new(ErrorKind::Other, "Server error"),
+                        _ => Error::new(ErrorKind::Other, format!("HTTP status error: {}", code)),
+                    });
+                },
+                Err(_) => return Err(Error::new(ErrorKind::NetworkUnreachable, "Server not reachable"))
+            };
+            match response.body_mut().read_to_string() {
+                Ok(token) => Ok(token),
+                Err(_) => Err(Error::new(ErrorKind::Other, "Could not read the response from server.")),
+            }
+        }
 }

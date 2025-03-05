@@ -1,3 +1,4 @@
+use core::login::LoginRequest;
 use std::io::Error;
 use std::convert::TryFrom;
 use chrono::Utc;
@@ -21,13 +22,13 @@ impl TokenHandler {
         Self { key: *b"fCGikre1TAc4apI1k8YvcyWorpXs8mLa" }
     }
 
-    pub fn generate(&self, sub: String) -> Result<String, Error> {
+    pub fn generate(&self, request: LoginRequest) -> Result<String, Error> {
         let date_time = Utc::now();
         let tomorrow = date_time + chrono::Duration::days(1);
         let iat = usize::try_from(date_time.timestamp()).unwrap();
         let exp = usize::try_from(tomorrow.timestamp()).unwrap();
         let my_claims = Claims {
-            sub: sub.to_owned(),
+            sub: request.email.to_owned(),
             exp: exp,
             iat: iat,
             iss: "peersend".to_owned(),

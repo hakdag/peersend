@@ -1,5 +1,5 @@
 use std::io::Error;
-use core::{api::ApiAccess, command::Command, user::User};
+use core::{api::ApiAccess, command::Command, create_user::CreateUserRequest};
 
 use crate::get_arg;
 
@@ -18,24 +18,11 @@ impl<TApiAccess> CreateUserService<TApiAccess> where TApiAccess: ApiAccess {
             None => &Vec::new(),
         };
         let username = get_arg(arguments, 0);
-        let user = User::new(username.clone(), get_arg(arguments, 1), get_arg(arguments, 2));
+        let user = CreateUserRequest::new(username.clone(), get_arg(arguments, 1), get_arg(arguments, 2), None);
 
         match self.api_access.create_user(user) {
             Ok(_) => Result::Ok(format!("User with username '{}' is created.", username)),
             Err(e) => Result::Err(e),
         }
-        /*
-        let res = user.validate();
-        if res.is_err() {
-            let err = res.unwrap_err();
-            let errs = err.field_errors();
-            return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, format!("Invalid {} entered.", errs[0].field_name().unwrap()).to_string()));
-        }
-
-        match self.storage_access.set(key, user) {
-            Ok(_) => Result::Ok(format!("User with username '{}' is created.", username)),
-            Err(e) => Result::Err(e),
-        }
-        */
     }
 }

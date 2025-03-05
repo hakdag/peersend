@@ -1,8 +1,9 @@
 use actix_web::{guard, web, App, HttpServer};
-use handlers::{ip_address::{get_ipaddress, set_ipaddress}, user::{create_user, health_check}};
+use handlers::{authenticate::authenticate, ip_address::{get_ipaddress, set_ipaddress}, user::{create_user, health_check}};
 
 mod models;
 mod handlers;
+mod accesses;
 
 /*
 Have a key-value pair list of target and source ips
@@ -38,7 +39,13 @@ async fn main() -> std::io::Result<()> {
             .route("/user",
                 web::post()
                     .guard(guard::Post())
-                    .to(create_user))
+                    .to(create_user)
+            )
+            .route("/authenticate",
+                web::post()
+                    .guard(guard::Post())
+                    .to(authenticate)
+            )
     })
     .bind(("127.0.0.1", 8080))?
     .run()

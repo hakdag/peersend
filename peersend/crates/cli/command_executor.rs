@@ -34,17 +34,8 @@ impl CommandExecutor {
         match command.command_type {
             CommandType::Help => HelpService::run(),
             CommandType::Version => VersionService::run(),
-            CommandType::CreateUser => {
-                return CreateUserService::new(api).run(command);
-            },
-            CommandType::Login => {
-                let rc2 = match RedisCommunication::new() {
-                    Ok(rc) => rc,
-                    Err(e) => return Err(e),
-                };
-                let ls = LoginService::new(rc2, FileStorage::new());
-                ls.run(command)
-            },
+            CommandType::CreateUser => CreateUserService::new(api).run(command),
+            CommandType::Login => LoginService::new(api, FileStorage::new()).run(command),
             CommandType::RegisterDevice => {
                 let rc3 = match RedisCommunication::new() {
                     Ok(rc) => rc,

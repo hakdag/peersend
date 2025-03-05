@@ -44,10 +44,10 @@ pub async fn register_device(http_request: HttpRequest, body: web::Json<Register
     }
 
     // if not, add device to devices file
-    match fs.add_device_to_user(&user, &request.devicename) {
+    match fs.add_device_to_user(&user, &request.devicename, &request.mac) {
         Ok(_) => {
             let token_handler = TokenHandler::new();
-            let token = token_handler.generate(&user.email).unwrap();
+            let token = token_handler.generate(&user.email, Some(request.mac)).unwrap();
             return HttpResponse::Ok().body(token);
         },
         Err(e) => {

@@ -37,14 +37,8 @@ impl CommandExecutor {
             CommandType::CreateUser => CreateUserService::new(api).run(command),
             CommandType::Login => LoginService::new(api, FileStorage::new()).run(command),
             CommandType::RegisterDevice => RegisterDeviceService::new(api, FileStorage::new()).run(command),
-            CommandType::Listen => {
-                let ls = ListenService::new(tcpc, stunc, api);
-                ls.run()
-            }
-            CommandType::Send => {
-                let send_file_service = SendFileService::new(udtc, stunc, user, api);
-                send_file_service.run(command)
-            },
+            CommandType::Listen => ListenService::new(tcpc, stunc, api).run(),
+            CommandType::Send => SendFileService::new(udtc, stunc, user, api).run(command),
         }
     }
 }

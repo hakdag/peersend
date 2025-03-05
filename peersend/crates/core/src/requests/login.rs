@@ -7,10 +7,11 @@ pub struct LoginRequest {
     pub email: String,
     #[validate(length(min = 3))]
     pub password: String,
+    pub mac: String
 }
 
 impl LoginRequest {
-    pub fn new(email: String, password: String) -> Self {
-        Self { email, password }
+    pub fn new(email: String, password: String, mac: String) -> Self {
+        Self { email, password, mac }
     }
 }

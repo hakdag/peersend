@@ -9,7 +9,7 @@ impl CreateUserParser {
     pub fn parse(args: &Vec<String>) -> Result<Command, Error> {
         let count = args.len();
         if count != 5 {
-            return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "Create User is expecting parameters: username, password, email"));
+            return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "Create User is expecting parameters: username email password"));
         }
 
         let arguments = Vec::from([

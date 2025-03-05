@@ -1,6 +1,7 @@
 use std::io::Error;
+
 use core::{api::ApiAccess, command::Command, requests::login::LoginRequest, token::TokenStorageAccessable};
-use crate::get_arg;
+use crate::{get_arg, get_mac};
 
 pub struct LoginService<TApiAccess, TFile> where TApiAccess: ApiAccess, TFile: TokenStorageAccessable {
     api_access: TApiAccess,
@@ -19,7 +20,8 @@ impl<TApiAccess, TFile> LoginService<TApiAccess, TFile> where TApiAccess: ApiAcc
         };
         let username = get_arg(arguments, 0);
         let password = get_arg(arguments, 1);
-        let login_request = LoginRequest::new(username, password);
+        let mac = get_mac()?;
+        let login_request = LoginRequest::new(username, password, mac);
         let token = self.api_access.login(login_request)?;
 
         match self.token_storage_access.save(token) {

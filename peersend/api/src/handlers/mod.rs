@@ -6,6 +6,7 @@ use services::jwt::token_handler::TokenHandler;
 pub mod ip_address;
 pub mod user;
 pub mod authenticate;
+pub mod device;
 
 pub(crate) fn get_token(req: HttpRequest) -> Option<String> {
     match req.headers().get("PS-Token") {

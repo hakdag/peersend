@@ -1,4 +1,3 @@
-use core::login::LoginRequest;
 use std::io::Error;
 use std::convert::TryFrom;
 use chrono::Utc;
@@ -8,9 +7,9 @@ use jsonwebtoken::{decode, encode, errors::ErrorKind, Algorithm, DecodingKey, En
 #[derive(Debug, Serialize, Deserialize)]
 struct Claims {
     exp: usize,     // Required (validate_exp defaults to true in validation). Expiration time (as UTC timestamp)
-    iat: usize,     // Optional. Issued at (as UTC timestamp)
-    iss: String,    // Optional. Issuer
-    sub: String,    // Optional. Subject (whom token refers to)
+    iat: usize,     // Issued at (as UTC timestamp)
+    iss: String,    // Issuer
+    sub: String,    // Subject (whom token refers to)
 }
 
 pub struct TokenHandler {
@@ -22,13 +21,13 @@ impl TokenHandler {
         Self { key: *b"fCGikre1TAc4apI1k8YvcyWorpXs8mLa" }
     }
 
-    pub fn generate(&self, request: LoginRequest) -> Result<String, Error> {
+    pub fn generate(&self, email: &String) -> Result<String, Error> {
         let date_time = Utc::now();
         let tomorrow = date_time + chrono::Duration::days(1);
         let iat = usize::try_from(date_time.timestamp()).unwrap();
         let exp = usize::try_from(tomorrow.timestamp()).unwrap();
         let my_claims = Claims {
-            sub: request.email.to_owned(),
+            sub: email.to_owned(),
             exp: exp,
             iat: iat,
             iss: "peersend".to_owned(),

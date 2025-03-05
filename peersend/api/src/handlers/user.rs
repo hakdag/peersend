@@ -1,4 +1,4 @@
-use core::create_user::CreateUserRequest;
+use core::requests::create_user::CreateUserRequest;
 
 use actix_web::{web, HttpRequest, HttpResponse};
 use validify::Validate;

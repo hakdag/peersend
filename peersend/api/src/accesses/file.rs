@@ -33,12 +33,6 @@ impl FileAccess {
         self.write_to_file(format!("{}/password", request.email), request.password.as_bytes())?;
         self.write_to_file(format!("{}/email", request.email), request.email.as_bytes())?;
 
-        let mut devices_f = fs::File::create(format!("{}/devices", request.email))?;
-        for device in &request.devices {
-            devices_f.write_all(device.devicename.as_bytes())?;
-            devices_f.write("\n".to_string().as_bytes())?;
-        };
-
         // (optional) hash file contents and store in a separate file: <email>_hash
 
         Ok(())
@@ -93,15 +87,22 @@ impl FileAccess {
         Ok(io::BufReader::new(file).lines())
     }
     
-    pub(crate) fn add_device_to_user(&self, user: &User, devicename: &str) -> Result<(), FileSystemError> {
-        let mut devices_f = OpenOptions::new()
-            .write(true)
-            .append(true)
-            .open(format!("{}/devices", user.email))
-            .unwrap();
+    pub(crate) fn add_device_to_user(&self, user: &User, devicename: &str, mac: &str) -> Result<(), FileSystemError> {
+        let devices_path = format!("{}/devices", user.email);
+        let res = match fs::exists(&devices_path) {
+            Ok(r) => r,
+            Err(e) => return Err(e.into()),
+        };
+        if res == false {
+            let _ = match fs::create_dir(&devices_path) {
+                Ok(_) => (),
+                Err(e) => return Err(e.into()),
+            };
+        }
 
-        devices_f.write_all(devicename.as_bytes())?;
-        devices_f.write("\n".to_string().as_bytes())?;
+        let mut devices_f = fs::File::create(format!("{}/{}", devices_path, devicename))?;
+        devices_f.write_all(mac.as_bytes())?;
+
         Ok(())
     }
 }

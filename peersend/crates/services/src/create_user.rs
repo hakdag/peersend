@@ -18,7 +18,7 @@ impl<TApiAccess> CreateUserService<TApiAccess> where TApiAccess: ApiAccess {
             None => &Vec::new(),
         };
         let username = get_arg(arguments, 0);
-        let user = CreateUserRequest::new(username.clone(), get_arg(arguments, 1), get_arg(arguments, 2), None);
+        let user = CreateUserRequest::new(username.clone(), get_arg(arguments, 1), get_arg(arguments, 2));
 
         match self.api_access.create_user(user) {
             Ok(_) => Result::Ok(format!("User with username '{}' is created.", username)),

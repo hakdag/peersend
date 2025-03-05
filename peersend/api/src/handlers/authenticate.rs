@@ -24,7 +24,7 @@ pub async fn authenticate(_: HttpRequest, body: web::Json<LoginRequest>) -> Http
             }
 
             let token_handler = TokenHandler::new();
-            let token = token_handler.generate(&login_request.email).unwrap();
+            let token = token_handler.generate(&login_request.email, Some(login_request.mac)).unwrap();
             HttpResponse::Ok().body(token)
         },
         Err(e) => {

@@ -10,6 +10,7 @@ struct Claims {
     iat: usize,     // Issued at (as UTC timestamp)
     iss: String,    // Issuer
     sub: String,    // Subject (whom token refers to)
+    mac: Option<String>, // MAC address of the device
 }
 
 pub struct TokenHandler {
@@ -21,7 +22,7 @@ impl TokenHandler {
         Self { key: *b"fCGikre1TAc4apI1k8YvcyWorpXs8mLa" }
     }
 
-    pub fn generate(&self, email: &String) -> Result<String, Error> {
+    pub fn generate(&self, email: &String, mac: Option<String>) -> Result<String, Error> {
         let date_time = Utc::now();
         let tomorrow = date_time + chrono::Duration::days(1);
         let iat = usize::try_from(date_time.timestamp()).unwrap();
@@ -31,6 +32,7 @@ impl TokenHandler {
             exp: exp,
             iat: iat,
             iss: "peersend".to_owned(),
+            mac: mac
         };
         match encode(&Header::default(), &my_claims, &EncodingKey::from_secret(&self.key)) {
             Ok(t) => Ok(t),

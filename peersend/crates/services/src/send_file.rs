@@ -28,17 +28,17 @@ impl<TProtocol, TSTUNAccessable, TUsersAccessable, TApiAccess> SendFileService<T
     pub fn run(&self, command: &Command) -> Result<String, Error> {
 
         /*
-        1- get public ip from stun
+        1- get public ip from stun X
         2- tell server public ip
         3- get target device's public ip from the server
         4- send the file
         */
 
-        let public_addr = match self.stun_access.discover_public_address() {
-            Ok(addr) => addr,
-            Err(_) => return Err(std::io::Error::new(std::io::ErrorKind::NetworkUnreachable, "Connection to STUN server failed. Could not get public address.".to_string())),
-        };
-        println!("Source public address: {}", public_addr);
+        // let public_addr = match self.stun_access.discover_public_address() {
+        //     Ok(addr) => addr,
+        //     Err(_) => return Err(std::io::Error::new(std::io::ErrorKind::NetworkUnreachable, "Connection to STUN server failed. Could not get public address.".to_string())),
+        // };
+        // println!("Source public address: {}", public_addr);
 
         let arguments = match &command.arguments {
             Some(args) => args,

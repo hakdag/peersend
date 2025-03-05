@@ -1,6 +1,7 @@
-use std::io::Error;
+use std::io::Error
+;
 use core::{api::ApiAccess, command::Command, device::Device, requests::device::RegisterDeviceRequest, token::TokenStorageAccessable};
-use crate::get_arg;
+use crate::{get_arg, get_mac};
 
 pub struct RegisterDeviceService<TApiAccess, TFile> where TApiAccess: ApiAccess, TFile: TokenStorageAccessable {
     api_access: TApiAccess,
@@ -18,8 +19,10 @@ impl<TApiAccess, TFile> RegisterDeviceService<TApiAccess, TFile> where TApiAcces
             Some(args) => args,
             None => &Vec::new(),
         };
+
+        let mac = get_mac()?;
         let device = Device::new(get_arg(arguments, 0), None);
-        let request = RegisterDeviceRequest::new(device.devicename);
+        let request = RegisterDeviceRequest::new(device.devicename, mac);
 
         let token = self.api_access.register_device(request)?;
 

@@ -34,12 +34,12 @@ impl<TRedis, TTokenAccess> UsersAccessable for UserService<TRedis, TTokenAccess>
         // validate token
         // get user Id from token's sub claim
         let token_handler = TokenHandler::new();
-        let user_id = match token_handler.validate(token) {
+        let (email, _) = match token_handler.validate(token) {
             Ok(id) => id,
             Err(e) => return Err(e),
         };
 
-        let user: User = match self.storage_access.get(user_id) {
+        let user: User = match self.storage_access.get(email) {
             Ok(u) => u,
             Err(e) => return Result::Err(e),
         };

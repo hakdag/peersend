@@ -40,11 +40,11 @@ impl TokenHandler {
         }     
     }
 
-    pub fn validate(&self, token: String) -> Result<String, Error> {
+    pub fn validate(&self, token: String) -> Result<(String, Option<String>), Error> {
         let mut validation = Validation::new(Algorithm::HS256);
         validation.set_required_spec_claims(&["exp", "sub", "iat", "iss"]);
         match decode::<Claims>(&token, &DecodingKey::from_secret(&self.key), &validation) {
-            Ok(claims) => Ok(claims.claims.sub),
+            Ok(claims) => Ok((claims.claims.sub, claims.claims.mac)),
             Err(err) => match *err.kind() {
                 ErrorKind::InvalidToken => Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, format!("Token is invalid.").to_string())),
                 ErrorKind::InvalidIssuer => Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, format!("Issuer is invalid.").to_string())),

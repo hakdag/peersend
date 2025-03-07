@@ -20,7 +20,7 @@ pub async fn register_device(http_request: HttpRequest, body: web::Json<Register
 
     // get token from header
     // decrypt token and get user email
-    let email = match validate_token_and_get_user_id(http_request) {
+    let (email, mac) = match validate_token_and_get_user_id(http_request) {
         Ok(e) => e,
         Err(e) => {
             println!("Error: {}", e.to_string());

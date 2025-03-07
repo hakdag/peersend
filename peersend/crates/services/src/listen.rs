@@ -22,7 +22,7 @@ impl<TProtocol, TSTUNAccessable, TApiAccess> ListenService<TProtocol, TSTUNAcces
 
         /*
         1- get public ip from stun
-        2- tell server public ip, user id (or name), and device name
+        2- tell server public ip, mac, user id (or email), and device name
         3- start listening
         */
 

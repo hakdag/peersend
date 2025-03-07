@@ -1,6 +1,9 @@
-use actix_web::{guard, web, App, HttpServer};
-use handlers::{authenticate::authenticate, device::register_device, ip_address::{get_ipaddress, set_ipaddress}, user::{create_user, health_check}};
+use std::sync::Mutex;
 
+use accesses::session::SessionDB;
+use actix_web::{guard, web::{self, Data}, App, HttpServer};
+
+use handlers::{authenticate::authenticate, device::register_device, ip_address::{get_ipaddress, set_ipaddress}, user::{create_user, health_check}};
 mod models;
 mod handlers;
 mod accesses;
@@ -11,11 +14,13 @@ target device will first tell its ip address, user id (or name), and device name
 source device then will ask for target devices ip by providing device name and user id
 */
 
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     println!("Starting server...");
     HttpServer::new(|| {
         App::new()
+            .app_data(Data::new(Mutex::new(SessionDB::new())))
             .route("/healthcheck",
                 web::get()
                 .to(health_check)

@@ -15,7 +15,7 @@ pub(crate) fn get_token(req: HttpRequest) -> Option<String> {
     }
 }
 
-pub fn validate_token_and_get_user_id(req: HttpRequest) -> Result<String, Error> {
+pub fn validate_token_and_get_user_id(req: HttpRequest) -> Result<(String, Option<String>), Error> {
     let token_raw = get_token(req);
     let token: String;
     if token_raw.is_some() {
@@ -29,7 +29,7 @@ pub fn validate_token_and_get_user_id(req: HttpRequest) -> Result<String, Error>
     let token_handler = TokenHandler::new();
     // get user id from token
     match token_handler.validate(token) {
-        Ok(id) => Ok(id),
+        Ok(info) => Ok(info),
         Err(e) => Err(e),
     }
 }

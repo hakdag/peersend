@@ -2,11 +2,11 @@ use core::device::Device;
 use core::requests::create_user::CreateUserRequest;
 use core::requests::login::LoginRequest;
 use core::user::User;
-use std::io::{self, BufRead, Write};
-use std::fs::{self, File, OpenOptions};
+use std::io::{self, BufRead, Read, Write};
+use std::fs::{self, File};
 use std::path::Path;
 
-use crate::models::error::FileSystemError;
+use crate::errors::file_system::FileSystemError;
 
 pub struct FileAccess {}
 
@@ -70,13 +70,19 @@ impl FileAccess {
 
         // read devices
         let mut devices: Vec<Device> = Vec::new();
-        if let Ok(lines) = self.read_lines(format!("{}/devices", id)) {
-            for devicename in lines.map_while(Result::ok) {
-                let device = Device::new(devicename, None);
+        for entry in fs::read_dir(format!("{}/devices", id))? {
+            let entry = entry?;
+            let path = entry.path();
+            if path.is_file() {
+                let mut file = File::open(&path)?;
+                let device_name = &path.file_name().unwrap().to_str().unwrap();
+                let mut mac = String::new();
+                file.read_to_string(&mut mac);
+                let device = Device::new(device_name.to_string(), Some(mac));
                 devices.push(device);
             }
         }
-
+        
         return Ok(User::new(username, email, Some(devices)))
     }
 

@@ -1,7 +1,7 @@
 use std::io::{Error, ErrorKind};
 
 use actix_web::HttpRequest;
-use services::jwt::token_handler::TokenHandler;
+use services::jwt::{token_handler::TokenHandler, token_user_info::TokenUserInfo};
 
 pub mod ip_address;
 pub mod user;
@@ -15,7 +15,7 @@ pub(crate) fn get_token(req: HttpRequest) -> Option<String> {
     }
 }
 
-pub fn validate_token_and_get_user_id(req: HttpRequest) -> Result<(String, Option<String>), Error> {
+pub fn validate_token_and_get_user_id(req: HttpRequest) -> Result<TokenUserInfo, Error> {
     let token_raw = get_token(req);
     let token: String;
     if token_raw.is_some() {

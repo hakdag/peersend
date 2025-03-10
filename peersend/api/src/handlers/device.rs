@@ -20,7 +20,7 @@ pub async fn register_device(http_request: HttpRequest, body: web::Json<Register
 
     // get token from header
     // decrypt token and get user email
-    let (email, mac) = match validate_token_and_get_user_id(http_request) {
+    let tui = match validate_token_and_get_user_id(http_request) {
         Ok(e) => e,
         Err(e) => {
             println!("Error: {}", e.to_string());
@@ -30,7 +30,7 @@ pub async fn register_device(http_request: HttpRequest, body: web::Json<Register
 
     // get user from file storage
     let fs = FileAccess::new();
-    let user = match fs.read_user(email) {
+    let user = match fs.read_user(tui.email) {
         Ok(u) => u,
         Err(e) => {
             println!("Error: {}", e.to_string());
@@ -47,7 +47,7 @@ pub async fn register_device(http_request: HttpRequest, body: web::Json<Register
     match fs.add_device_to_user(&user, &request.devicename, &request.mac) {
         Ok(_) => {
             let token_handler = TokenHandler::new();
-            let token = token_handler.generate(&user.email, Some(request.mac)).unwrap();
+            let token = token_handler.generate(&user.email, Some(request.mac), Some(request.devicename)).unwrap();
             return HttpResponse::Ok().body(token);
         },
         Err(e) => {

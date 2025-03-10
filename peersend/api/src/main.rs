@@ -7,6 +7,7 @@ use handlers::{authenticate::authenticate, device::register_device, ip_address::
 mod models;
 mod handlers;
 mod accesses;
+mod errors;
 
 /*
 Have a key-value pair list of target and source ips

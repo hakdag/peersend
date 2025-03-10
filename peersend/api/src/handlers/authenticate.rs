@@ -17,19 +17,49 @@ pub async fn authenticate(_: HttpRequest, body: web::Json<LoginRequest>) -> Http
     }
 
     let fs = FileAccess::new();
-    match fs.get_user_password(&login_request) {
+    let _ = match fs.get_user_password(&login_request) {
         Ok(password) => {
             if password != login_request.password {
                 return HttpResponse::BadRequest().body("Invalid password entered.".to_string());
             }
-
-            let token_handler = TokenHandler::new();
-            let token = token_handler.generate(&login_request.email, Some(login_request.mac)).unwrap();
-            HttpResponse::Ok().body(token)
         },
         Err(e) => {
             println!("Error: {}", e.to_string());
-            HttpResponse::InternalServerError().body(e.to_string())
+            return HttpResponse::InternalServerError().body(e.to_string());
         },
+    };
+    
+    let email = login_request.email.to_owned();
+    let user = match fs.read_user(email) {
+        Ok(u) => u,
+        Err(e) => {
+            println!("Error: {}", e.to_string());
+            return HttpResponse::InternalServerError().body(e.to_string());
+        },
+    };
+
+    // find the matching device from the user devices by mac
+    let index = user.devices.iter().position(|d| d.mac.is_some() && d.mac.to_owned().unwrap() == login_request.mac);
+    if index.is_none() {
+        let token = generate_token(user.email, login_request.mac, None);
+
+        return HttpResponse::Ok().body(token);
     }
+
+    let device_name = match user.devices.get(index.unwrap()) {
+        Some(d) => Some(d.devicename.to_owned()),
+        None => None,
+    };
+
+    // add device to the token
+    let token = generate_token(user.email, login_request.mac, device_name);
+
+    HttpResponse::Ok().body(token)
+
+}
+
+fn generate_token(email: String, mac: String, device_name: Option<String>) -> String {
+    let token_handler = TokenHandler::new();
+    let token = token_handler.generate(&email, Some(mac), device_name).unwrap();
+    token
 }

@@ -8,12 +8,12 @@ pub struct Device {
     #[validate(length(min = 3))]
     pub devicename: String,
 
-    pub ip_address: Option<String>,
+    pub mac: Option<String>,
 }
 
 impl Device {
-    pub fn new(devicename: String, ip_address: Option<String>) -> Self {
-        Self { devicename, ip_address }
+    pub fn new(devicename: String, mac: Option<String>) -> Self {
+        Self { devicename, mac }
     }
 }
 

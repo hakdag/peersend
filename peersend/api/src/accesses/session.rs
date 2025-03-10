@@ -11,8 +11,8 @@ impl SessionDB {
         self.sessions.push(session)
     }
 
-    pub fn get(&self, mac: String) -> Option<PeerSession> {
-        let index = match self.sessions.iter().position(|session| session.mac == mac) {
+    pub fn get(&self, device_name: String) -> Option<PeerSession> {
+        let index = match self.sessions.iter().position(|session| session.device_name == device_name) {
             Some(i) => i,
             None => return None,
         };

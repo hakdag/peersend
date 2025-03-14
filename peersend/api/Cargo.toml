@@ -14,6 +14,7 @@ validify = "2.0.0"
 jsonwebtoken = "9.3.1"
 bincode = "1.3.3"
 chrono = "0.4.40"
+redis = "0.29.1"
 
 [dependencies.uuid]
 version = "1.15.0"

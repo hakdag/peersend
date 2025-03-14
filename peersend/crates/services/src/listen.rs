@@ -28,7 +28,7 @@ impl<TProtocol, TSTUNAccessable, TApiAccess> ListenService<TProtocol, TSTUNAcces
 
         let public_addr = match self.stun_access.discover_public_address() {
             Ok(addr) => addr,
-            Err(_) => return Err(std::io::Error::new(std::io::ErrorKind::NetworkUnreachable, "Connection to STUN server failed. Could not get public address.".to_string())),
+            Err(e) => return Err(std::io::Error::new(std::io::ErrorKind::NetworkUnreachable, format!("Connection to STUN server failed. Could not get public address. {}", e.to_string()))),
         };
         println!("Target public address: {}", public_addr);
 

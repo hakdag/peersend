@@ -1,7 +1,4 @@
-use std::sync::Mutex;
-
-use accesses::session::SessionDB;
-use actix_web::{guard, web::{self, Data}, App, HttpServer};
+use actix_web::{guard, web::{self}, App, HttpServer};
 
 use handlers::{authenticate::authenticate, device::register_device, ip_address::{get_ipaddress, set_ipaddress}, user::{create_user, health_check}};
 mod models;
@@ -19,9 +16,8 @@ source device then will ask for target devices ip by providing device name and u
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     println!("Starting server...");
-    HttpServer::new(|| {
+    HttpServer::new(move || {
         App::new()
-            .app_data(Data::new(Mutex::new(SessionDB::new())))
             .route("/healthcheck",
                 web::get()
                 .to(health_check)

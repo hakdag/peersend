@@ -1,13 +1,11 @@
-use std::sync::Mutex;
-
 use actix_web::{web, HttpRequest, HttpResponse};
 use services::jwt::token_handler::TokenHandler;
 
-use crate::{accesses::session::SessionDB, models::peer_session::PeerSession};
+use crate::{accesses::redis::RedisAccess, models::peer_session::PeerSession};
 
 use super::{get_token, validate_token_and_get_user_id};
 
-pub async fn get_ipaddress(req: HttpRequest, data: web::Data<Mutex<SessionDB>>, body: web::Bytes) -> HttpResponse {
+pub async fn get_ipaddress(req: HttpRequest, body: web::Bytes) -> HttpResponse {
     let token_raw = get_token(req);
     let token: String;
     if token_raw.is_some() {
@@ -20,8 +18,8 @@ pub async fn get_ipaddress(req: HttpRequest, data: web::Data<Mutex<SessionDB>>, 
     // validate token
     let token_handler = TokenHandler::new();
     // get user id from token
-    let _ = match token_handler.validate(token) {
-        Ok(_) => (),
+    let user_info = match token_handler.validate(token) {
+        Ok(ui) => ui,
         Err(_) => return HttpResponse::Unauthorized().finish(),
     };
 
@@ -32,16 +30,26 @@ pub async fn get_ipaddress(req: HttpRequest, data: web::Data<Mutex<SessionDB>>, 
     };
 
     // get ip address from in-memory db
-    let session_db = data.lock().unwrap();
-    let session = match session_db.get(device_name) {
-        Some(s) => s,
-        None => return HttpResponse::BadRequest().body("Device or Session not found."),
+    let redis_access = match RedisAccess::new() {
+        Ok(r) => r,
+        Err(e) => return HttpResponse::InternalServerError().body(e.to_string()),
+    };
+    let session: PeerSession = match redis_access.get(&user_info.email) {
+        Ok(ps) => match ps {
+            Some(s) => s,
+            None => return HttpResponse::InternalServerError().body("Session could not be found.".to_string()),
+        },
+        Err(e) => return HttpResponse::InternalServerError().body(e.to_string()),
+    };
+    let device = match session.get_device(device_name) {
+        Some(d) => d,
+        None => return HttpResponse::BadRequest().body("Device not found in the session."),
     };
 
-    HttpResponse::Ok().body(session.ip_address.clone())
+    HttpResponse::Ok().body(device.ip_address.clone())
 }
 
-pub async fn set_ipaddress(req: HttpRequest, data: web::Data<Mutex<SessionDB>>, body: web::Bytes) -> HttpResponse {
+pub async fn set_ipaddress(req: HttpRequest, body: web::Bytes) -> HttpResponse {
     // validate token
     // get user id from token
     let tui = match validate_token_and_get_user_id(req) {
@@ -61,11 +69,30 @@ pub async fn set_ipaddress(req: HttpRequest, data: web::Data<Mutex<SessionDB>>, 
         Ok(text) => text,
         Err(_) => return HttpResponse::BadRequest().body("Invalid ip address provided.")
     };
-    let session = PeerSession::new(tui.email, tui.device_name.unwrap(), ip_address, tui.mac.unwrap());
-    let mut session_db = data.lock().unwrap();
-    session_db.add(session);
+    let redis_access = match RedisAccess::new() {
+        Ok(r) => r,
+        Err(e) => return HttpResponse::InternalServerError().body(e.to_string()),
+    };
+    match redis_access.get::<PeerSession>(&tui.email) {
+        Ok(ps) => match ps {
+            Some(mut session) => {
+                session.add_device(tui.device_name.unwrap(), ip_address, tui.mac.unwrap());
 
-    println!("There are {} session(s) in the SessionDB.", session_db.count());
-    HttpResponse::Ok().finish()
+                match redis_access.set(&tui.email, session) {
+                    Ok(_) => HttpResponse::Ok().finish(),
+                    Err(_) => HttpResponse::InternalServerError().body("Could not update session.".to_string()),
+                }
+            },
+            None => {
+                let session = PeerSession::new(&tui.email, tui.device_name.unwrap(), ip_address, tui.mac.unwrap());
+
+                match redis_access.set(&tui.email, session) {
+                    Ok(_) => HttpResponse::Ok().finish(),
+                    Err(_) => HttpResponse::InternalServerError().body("Could not update session.".to_string()),
+                }
+            }
+        },
+        Err(e) => return HttpResponse::InternalServerError().body(e.to_string()),
+    }
 }
 

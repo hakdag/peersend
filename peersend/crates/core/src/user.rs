@@ -4,7 +4,7 @@ use redis::{from_redis_value, FromRedisValue, ToRedisArgs};
 use bincode::{serialize, deserialize};
 use serde::{Serialize, Deserialize};
 use validify::Validify;
-use crate::device::Device;
+use crate::{device::Device, requests::check_user::CheckUserRequest};
 
 #[derive(Serialize, Deserialize, Validify, Debug)]
 pub struct User {
@@ -73,7 +73,12 @@ impl ToRedisArgs for User {
 impl FromRedisValue for User {
     fn from_redis_value(v: &redis::Value) -> redis::RedisResult<Self> {
         let r: Vec<u8> = from_redis_value(v)?;
-        let obj: User = deserialize(&r).unwrap();
+        let obj: User = match deserialize(&r) {
+            Ok(u) => u,
+            Err(e) => {
+                panic!("Error when deserializing user: {}", e.to_string());
+            },
+        };
         Ok(obj)
     }
 }
@@ -81,4 +86,5 @@ impl FromRedisValue for User {
 pub trait UsersAccessable {
     fn get_token(&self) -> Result<String, Error>;
     fn get_user(&self) -> Result<User, Error>;
+    fn check_user(&self, request: CheckUserRequest) -> Result<(), Error>;
 }

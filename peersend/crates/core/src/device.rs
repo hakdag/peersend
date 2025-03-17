@@ -27,7 +27,10 @@ impl ToRedisArgs for Device {
 impl FromRedisValue for Device {
     fn from_redis_value(v: &redis::Value) -> redis::RedisResult<Self> {
         let r: Vec<u8> = from_redis_value(v)?;
-        let obj: Device = deserialize(&r).unwrap();
+        let obj: Device = match deserialize(&r) {
+            Ok(d) => d,
+            Err(e) => panic!("Error when deserializing device: {}", e.to_string()),
+        };
         Ok(obj)
     }
 }

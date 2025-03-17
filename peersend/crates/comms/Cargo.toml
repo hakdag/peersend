@@ -11,7 +11,7 @@ serde = "1.0.218"
 serde_json = "1.0.140"
 stunclient = "*"
 udt = "*"
-ureq = "3.0.8"
+ureq = "3.0.9"
 
 [dependencies.redis]
 version = "*"

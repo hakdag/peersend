@@ -1,4 +1,4 @@
-use core::{api::ApiAccess, requests::{create_user::CreateUserRequest, device::RegisterDeviceRequest, login::LoginRequest}, token::TokenStorageAccessable};
+use core::{api::ApiAccess, requests::{check_user::CheckUserRequest, create_user::CreateUserRequest, device::RegisterDeviceRequest, login::LoginRequest}, token::TokenStorageAccessable};
 use std::{io::{Error, ErrorKind}, str::FromStr};
 
 use ureq::{http::{Response, Uri}, Body, Error as UreqError};
@@ -121,5 +121,29 @@ impl<TTokenAccess> ApiAccess for APICommunicator<TTokenAccess> where TTokenAcces
             Ok(token) => Ok(token),
             Err(_) => Err(Error::new(ErrorKind::Other, "Could not read the response from server.")),
         }
+    }
+    
+    fn check_user(&self, request: CheckUserRequest) -> Result<(), Error> {
+        let data = serde_json::to_string(&request).unwrap();
+        let token = self.token_access.read()?;
+        let uri = match Uri::from_str(&format!("{}/user/check", self.server_address)) {
+            Ok(u) => u,
+            Err(_) => return Err(Error::new(ErrorKind::InvalidInput, "Invalid server address provided.".to_string())),
+        };
+        let mut response = match ureq::post(uri)
+            .header("PS-Token", token)
+            .header("content-type", "application/json")
+            .send(data) {
+                Ok(r) => r,
+                Err(_) => return Err(Error::new(ErrorKind::NetworkUnreachable, "Server not reachable"))
+        };
+        match response.body_mut().read_to_string() {
+            Ok(_) => Ok(()),
+            Err(_) => Err(Error::new(ErrorKind::Other, "Could not read the response from server.")),
+        }
+    }
+    
+    fn get_user(&self, email: String) -> Result<core::user::User, Error> {
+        todo!()
     }
 }

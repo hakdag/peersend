@@ -1,5 +1,5 @@
 use std::{io::Error, path::Path};
-use core::{api::ApiAccess, command::Command, protocol::ProtocolAccessable, stun::STUNAccessible, user::UsersAccessable};
+use core::{api::ApiAccess, command::Command, protocol::ProtocolAccessable, requests::check_user::CheckUserRequest, stun::STUNAccessible, user::UsersAccessable};
 use crate::get_arg;
 
 pub struct SendFileService<TProtocol, TSTUNAccessable, TUsersAccessable, TApiAccess>
@@ -45,7 +45,6 @@ impl<TProtocol, TSTUNAccessable, TUsersAccessable, TApiAccess> SendFileService<T
             None => &Vec::new(),
         };
         let arg_filename = get_arg(arguments, 0);
-        let arg_source_device = get_arg(arguments, 1);
         let arg_target_device = get_arg(arguments, 2);
 
         let path = Path::new(&arg_filename);
@@ -53,6 +52,12 @@ impl<TProtocol, TSTUNAccessable, TUsersAccessable, TApiAccess> SendFileService<T
             return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "File not found.".to_string()));
         }
 
+        match self.users_access.check_user(CheckUserRequest::new(arg_target_device.clone())) {
+            Ok(_) => (),
+            Err(e) => return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, e.to_string())),
+        };
+
+        /*
         let user = match self.users_access.get_user() {
             Ok(u) => u,
             Err(e) => return Err(e),
@@ -64,6 +69,8 @@ impl<TProtocol, TSTUNAccessable, TUsersAccessable, TApiAccess> SendFileService<T
         if !user.has_device(&arg_target_device) {
             return Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "User did not register the target device.".to_string()));
         }
+        */
+
 
         self.send_file(arg_filename, arg_target_device)
     }

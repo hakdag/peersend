@@ -1,6 +1,6 @@
 use actix_web::{guard, web::{self}, App, HttpServer};
 
-use handlers::{authenticate::authenticate, device::register_device, ip_address::{get_ipaddress, set_ipaddress}, user::{create_user, health_check}};
+use handlers::{authenticate::authenticate, device::register_device, ip_address::{get_ipaddress, set_ipaddress}, user::{check_user, create_user, health_check}};
 mod models;
 mod handlers;
 mod accesses;
@@ -42,6 +42,11 @@ async fn main() -> std::io::Result<()> {
                 web::post()
                     .guard(guard::Post())
                     .to(create_user)
+            )
+            .route("/user/check",
+                web::post()
+                    .guard(guard::Post())
+                    .to(check_user)
             )
             .route("/authenticate",
                 web::post()
